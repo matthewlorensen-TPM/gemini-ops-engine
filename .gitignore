@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
@@ -218,3 +219,25 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+=======
+# Environment & Secrets (CRITICAL)
+.env
+credentials.json
+
+# Virtual Environment
+venv/
+[Bb]in/
+[Ll]ibs/
+
+# Test Audio Files & Output Artifacts
+*.m4a
+*.mp3
+*.wav
+outputs/
+
+# Python Cache & System Files
+__pycache__/
+*.pyc
+.vscode/
+.DS_Store
+>>>>>>> 4b00b96 (feat: setup client intake portal as main App component)
