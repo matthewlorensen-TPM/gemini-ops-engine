@@ -6,38 +6,41 @@ import {
   Layers,
   Mic,
   Square,
-  Upload,
-  Play,
   Copy,
   Check,
-  Download,
   RefreshCw,
   Sparkles,
-  Cpu,
   Building,
   User,
   Mail,
   Phone,
   MapPin,
-  TrendingUp,
-  AlertTriangle,
   CheckCircle2,
-  Info,
-  Lock,
-  ArrowUpRight,
   Calculator,
-  Volume2,
   Palette,
   Target,
   Briefcase,
   Compass,
-  FileCode
+  FileCode,
+  FileCheck2,
+  CheckSquare,
+  Square as SquareIcon
 } from 'lucide-react';
 
 // ==========================================
 // VALUE LADDER PACKAGES DEFINITION
 // ==========================================
 const PACKAGES = [
+  {
+    id: 'contract',
+    title: 'Client Engagement Contract',
+    price: 200,
+    tag: 'Agreement Asset',
+    icon: ShieldCheck,
+    color: 'teal',
+    description: 'Formal Client Engagement Agreement for Rooted Solutions LLC, detailing agreed services, payment terms, and scope protection.',
+    deliverables: ['Master Engagement Contract', 'Selected Services Schedule', 'Scope Change & Deposit Boilerplate']
+  },
   {
     id: 'financial',
     title: 'Bank-Ready Financial Model',
@@ -47,16 +50,6 @@ const PACKAGES = [
     color: 'emerald',
     description: '3-Year P&L, 12-month cash flow forecast, and break-even analysis workbook in Google Sheets.',
     deliverables: ['Custom Google Sheets Workbook', 'Break-Even & Debt Service Model', 'SBA Loan Ready Summary']
-  },
-  {
-    id: 'contract',
-    title: 'Contract & Estimate Pack',
-    price: 200,
-    tag: 'Legal Asset',
-    icon: ShieldCheck,
-    color: 'teal',
-    description: 'Master Services Agreement (MSA), itemized SOW template, and scope-creep protection rules.',
-    deliverables: ['Modular MSA + SOW Template', 'Scope Change & Deposit Boilerplate', 'Branded Quote Layout']
   },
   {
     id: 'sop',
@@ -116,50 +109,24 @@ const PACKAGES = [
     icon: Layers,
     color: 'amber',
     description: 'Combines Financial Model, Contracts, SOPs, and Strategy into a complete 10-day business launchpad.',
-    deliverables: ['All Core $200 Packages', 'Custom Master Documents', '1-on-1 Strategy Sprint Review']
+    deliverables: ['All Core $200 Packages', 'Custom Master Documents', '1-on-1 Strategy Review']
   }
 ];
 
-// ==========================================
-// DEFAULT GEMINI PROMPTS FOR PACKAGES
-// ==========================================
-const PROMPTS = {
-  financial: `You are a Senior Financial Analyst for small business underwriting. Extract financial metrics from the intake data or transcript provided and return ONLY a valid JSON object strictly matching this schema without markdown fences:
-{
-  "client_name": "String",
-  "business_name": "String",
-  "average_job_price": number,
-  "monthly_job_volume": number,
-  "cogs_percentage": number,
-  "payment_processing_fee_percentage": number,
-  "tax_reserve_percentage": number,
-  "fixed_monthly_opex": number,
-  "opex_breakdown": [{"category": "String", "monthly_cost": number}],
-  "gross_monthly_revenue": number,
-  "net_monthly_profit": number,
-  "annual_projected_revenue": number,
-  "break_even_monthly_revenue": number,
-  "underwriter_notes": "String"
-}`,
-
-  contract: `You are a Commercial Contract Specialist for small service businesses and trade contractors. Using the client intake information provided, construct a formal, legally sound Master Services Agreement (MSA) and Statement of Work (SOW) in clear Markdown format. Include deposit terms, scope-change rules, liability limits, and itemized billing.`,
-
-  sop: `You are an Operations Engineer. Process the intake notes, voice notes, or transcript to generate a complete Standard Operating Procedure (SOP) in strict Markdown format with: Title, Department, Owner, Purpose, Roles & Responsibilities, Step-by-Step Procedure, Exception Handling, and a 5-item Quality Control Checklist.`,
-
-  branding: `You are a Brand Strategist and Creative Director. Using the client's business details, create a complete Brand Identity & Messaging Guide in Markdown. Include Brand Positioning, Mission, USP, Color Palette (HEX codes), Font Directives, AI Image Generation Prompts for logos, 30-Second Commercial Pitch, and Social Media Headlines.`,
-
-  marketing: `You are a Local Marketing Strategist. Create a tailored Marketing & Customer Acquisition Playbook in Markdown based on the client's services and location. Include Top 3 Channels, Promotional Flyer Copy, Direct Ad Script, and a 30-Day Step-by-Step Growth Roadmap.`,
-
-  business_plan: `You are a Small Business Consultant specializing in bank loan applications and startup strategies. Generate a concise, bank-ready Executive Business Plan Narrative in Markdown covering Executive Summary, Market Analysis, Competitive Advantage, Revenue Model, Unit Economics, and Capital Deployment.`,
-
-  consulting: `You are a Fractional Chief Technology & Operations Officer. Analyze the client's current setup and deliver an Operations & Tech Stack Audit Report in Markdown. Include Current State Diagnostic, Software Audit, System Automations (Quick Wins), and a Prioritized Action Plan.`
-};
+// Available services to pick from when creating a Client Contract
+const CONTRACT_SERVICE_OPTIONS = [
+  { id: 'financial', name: 'Bank-Ready Financial Modeling & P&L Workbook' },
+  { id: 'sop', name: 'Standard Operating Procedure (SOP) Development' },
+  { id: 'branding', name: 'Brand Identity, Messaging & Value Proposition Guide' },
+  { id: 'marketing', name: 'Local Marketing Strategy & Campaign Playbook' },
+  { id: 'business_plan', name: 'Bank-Ready Business Plan Narrative' },
+  { id: 'consulting', name: 'IT Infrastructure & Operations Friction Diagnostic' },
+  { id: 'advisory', name: 'Ongoing Fractional Ops & Strategic Advisory Support' }
+];
 
 export default function App() {
   // Navigation & Config State
-  const [selectedPackageId, setSelectedPackageId] = useState('financial');
-  const [apiKey, setApiKey] = useState('');
-  const [modelChoice, setModelChoice] = useState('gemini-2.0-flash');
+  const [selectedPackageId, setSelectedPackageId] = useState('contract');
 
   // Execution & Output State
   const [isGenerating, setIsGenerating] = useState(false);
@@ -178,6 +145,16 @@ export default function App() {
   });
 
   // Dynamic Form States
+  const [contractInputs, setContractInputs] = useState({
+    clientSignerTitle: 'Owner / Principal',
+    totalContractValue: 600,
+    depositPct: 50,
+    paymentTerms: '50% deposit upon signing, 50% upon final deliverable approval',
+    selectedServices: ['financial', 'sop', 'consulting'],
+    specialTerms: 'Weekly 30-minute status check-ins included during active sprint. Target project completion within 10 business days.',
+    exclusions: 'Software licensing costs, filing fees, and third-party advertising spend are excluded from consulting fees.'
+  });
+
   const [finInputs, setFinInputs] = useState({
     avgJobPrice: 1500,
     monthlyVolume: 8,
@@ -193,47 +170,37 @@ export default function App() {
     ]
   });
 
-  const [contractInputs, setContractInputs] = useState({
-    clientName: 'Highland Park Real Estate Mgmt',
-    siteLocation: '1420 E 104th Ave, Thornton CO',
-    scopeDescription: 'Full electrical sub-panel upgrade, 200A main service hookup, and dedicated 50A EV charger installation in west garage.',
-    totalPrice: 4200,
-    depositPct: 50,
-    timelineDays: 5,
-    exclusions: 'Utility permit fees excluded; ungrounded legacy knob-and-tube rewiring requires separate change order.'
-  });
-
   const [sopInputs, setSopInputs] = useState({
-    department: 'Field Service',
-    sopTitle: 'Customer Site Intake & Estimate Approval',
-    processOwner: 'Lead Dispatcher / Crew Lead',
-    systemsUsed: 'Google Sheets, Housecall Pro, Stripe Reader',
-    inputTrigger: 'Signed customer quote or deposit receipt',
-    voiceNotes: 'When a tech arrives on site, they do a 15-minute diagnostic, fill out the tablet checklist, show the homeowner the flat-rate pricing menu, get a digital signature before turning a wrench, and record any pre-existing damage.'
+    department: 'Field Operations',
+    sopTitle: 'Customer Site Intake & Service Approval',
+    processOwner: 'Crew Lead / Operations Manager',
+    systemsUsed: 'Google Sheets, Stripe Reader, Scheduling App',
+    inputTrigger: 'Customer quote signature or deposit confirmation',
+    voiceNotes: 'When a technician arrives on site, perform a 15-minute diagnostic, fill out the digital checklist, review flat-rate pricing options with the customer, obtain digital sign-off prior to commencing work, and document pre-existing job site conditions.'
   });
 
   const [brandingInputs, setBrandingInputs] = useState({
-    tagline: 'Precision Work Built to Last',
-    targetAudience: 'Homeowners & Commercial Property Managers in Adams County',
-    visualVibe: 'Clean, modern, dependable, premium dark navy and emerald theme',
-    keyServices: 'Emergency plumbing, panel upgrades, routine preventive maintenance'
+    tagline: 'Precision Solutions Built to Last',
+    targetAudience: 'Homeowners and Commercial Property Managers in Adams County',
+    visualVibe: 'Clean, modern, dependable, premium dark navy and emerald accents',
+    keyServices: 'Emergency plumbing, electrical upgrades, preventive maintenance plans'
   });
 
   const [marketingInputs, setMarketingInputs] = useState({
     monthlyBudget: 400,
-    mainChannels: 'Google Maps Local Pack, Direct Contractor Flyers, Local Facebook Groups',
-    uniqueOffer: '$50 off first service call or free diagnostic with panel inspection'
+    mainChannels: 'Google Local Services Ads, Business Referral Partners, Direct Local Mailers',
+    uniqueOffer: '$50 off initial diagnostic call with comprehensive panel inspection'
   });
 
   const [bizPlanInputs, setBizPlanInputs] = useState({
     fundingRequired: 15000,
-    useOfFunds: 'Work truck equipment, initial licensing/insurance, local marketing launch',
-    competitiveAdvantage: '48-hour estimate turnaround, direct owner-operated quality guarantee'
+    useOfFunds: 'Work vehicle setup, specialized tools, licensing, initial marketing launch',
+    competitiveAdvantage: '48-hour response guarantee, direct owner oversight on all projects'
   });
 
   const [consultingInputs, setConsultingInputs] = useState({
-    mainBottleneck: 'Owner spends 15 hours a week doing quotes and manual invoice follow-ups after hours',
-    currentTechStack: 'Pen and paper, personal Gmail, paper receipts, square card reader'
+    mainBottleneck: 'Owner spends 15+ hours weekly on manual quotes, invoice chasing, and scheduling',
+    currentTechStack: 'Paper estimates, personal email, manual spreadsheet tracking'
   });
 
   // Audio Recording & Transcript State
@@ -255,7 +222,6 @@ export default function App() {
     const taxReserve = netEbit > 0 ? netEbit * (finInputs.taxReservePct / 100) : 0;
     const netTakeHome = netEbit - taxReserve;
     const marginPct = grossRev > 0 ? ((netTakeHome / grossRev) * 100).toFixed(1) : 0;
-
     const contributionMarginPct = 1 - (finInputs.cogsPct / 100) - (finInputs.processingFeePct / 100);
     const breakEvenMonthlyRev = contributionMarginPct > 0 ? Math.round(totalFixedOpex / contributionMarginPct) : 0;
 
@@ -273,7 +239,18 @@ export default function App() {
     };
   }, [finInputs]);
 
-  // Handle Recording Toggle (Mock UI / Real Audio Capture ready)
+  // Toggle Contract Included Service
+  const toggleContractService = (serviceId) => {
+    setContractInputs(prev => {
+      const exists = prev.selectedServices.includes(serviceId);
+      const updated = exists
+        ? prev.selectedServices.filter(id => id !== serviceId)
+        : [...prev.selectedServices, serviceId];
+      return { ...prev, selectedServices: updated };
+    });
+  };
+
+  // Toggle Recording Mock / Web Audio
   const toggleRecording = () => {
     if (isRecording) {
       clearInterval(timerRef.current);
@@ -287,123 +264,179 @@ export default function App() {
     }
   };
 
-  // Run Gemini API Pipeline
-  const runGeminiIntakePipeline = async () => {
+  // Generate Document Action
+  const generateDocument = async () => {
     setIsGenerating(true);
     const startTime = performance.now();
 
-    try {
-      const targetApiKey = apiKey || '';
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelChoice}:generateContent?key=${targetApiKey}`;
-      const systemPrompt = PROMPTS[selectedPackageId] || PROMPTS.financial;
+    // Brief UI delay simulation
+    await new Promise(res => setTimeout(res, 800));
 
-      let userContextText = `CLIENT PROFILE:
-Business: ${clientProfile.businessName}
-Owner: ${clientProfile.contactName}
-Email: ${clientProfile.email}
-Phone: ${clientProfile.phone}
-Location: ${clientProfile.location}
+    let output = '';
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-`;
+    if (selectedPackageId === 'contract') {
+      const includedList = CONTRACT_SERVICE_OPTIONS
+        .filter(opt => contractInputs.selectedServices.includes(opt.id))
+        .map(opt => `- **${opt.name}**`)
+        .join('\n');
 
-      if (inputTab === 'transcript' && transcriptText.trim()) {
-        userContextText += `CALL TRANSCRIPT / INTENDED WORKFLOW:
-${transcriptText}`;
-      } else if (selectedPackageId === 'financial') {
-        userContextText += `FINANCIAL INTAKE DATA:
-- Average Price per Job: $${finInputs.avgJobPrice}
-- Expected Monthly Jobs: ${finInputs.monthlyVolume}
-- Direct COGS Rate: ${finInputs.cogsPct}%
-- Payment Processing Fee: ${finInputs.processingFeePct}%
-- Tax Reserve Withholding: ${finInputs.taxReservePct}%
-- Debt / Loan Payments: $${finInputs.loanPayments}
-- Fixed OPEX Items: ${JSON.stringify(finInputs.opexItems)}
-- Calculated Gross Monthly Revenue: $${finCalculations.grossRev}
-- Calculated Monthly Fixed OPEX: $${finCalculations.totalFixedOpex}
-- Calculated Net Monthly Profit: $${finCalculations.netTakeHome}`;
-      } else if (selectedPackageId === 'contract') {
-        userContextText += `CONTRACT & SOW INTAKE DATA:
-- Customer Name: ${contractInputs.clientName}
-- Work Site Address: ${contractInputs.siteLocation}
-- Scope of Work Description: ${contractInputs.scopeDescription}
-- Total Price Quoted: $${contractInputs.totalPrice}
-- Deposit Percentage: ${contractInputs.depositPct}%
-- Target Duration: ${contractInputs.timelineDays} Days
-- Explicit Exclusions / Terms: ${contractInputs.exclusions}`;
-      } else if (selectedPackageId === 'branding') {
-        userContextText += `BRANDING INTAKE DATA:
-- Tagline Concept: ${brandingInputs.tagline}
-- Target Audience: ${brandingInputs.targetAudience}
-- Visual Vibe & Style: ${brandingInputs.visualVibe}
-- Primary Services: ${brandingInputs.keyServices}`;
-      } else if (selectedPackageId === 'marketing') {
-        userContextText += `MARKETING INTAKE DATA:
-- Monthly Marketing Budget: $${marketingInputs.monthlyBudget}
-- Preferred Channels: ${marketingInputs.mainChannels}
-- Special Offer / Hook: ${marketingInputs.uniqueOffer}`;
-      } else if (selectedPackageId === 'business_plan') {
-        userContextText += `BUSINESS PLAN INTAKE DATA:
-- Capital Required: $${bizPlanInputs.fundingRequired}
-- Planned Allocation: ${bizPlanInputs.useOfFunds}
-- Core Differentiation: ${bizPlanInputs.competitiveAdvantage}`;
-      } else if (selectedPackageId === 'consulting') {
-        userContextText += `OPS CONSULTING INTAKE DATA:
-- Primary Friction Point: ${consultingInputs.mainBottleneck}
-- Current Software Tools: ${consultingInputs.currentTechStack}`;
-      } else {
-        userContextText += `SOP INTAKE DATA:
-- Department: ${sopInputs.department}
-- SOP Title: ${sopInputs.sopTitle}
-- Process Owner: ${sopInputs.processOwner}
-- Systems & Software Used: ${sopInputs.systemsUsed}
-- Input Trigger: ${sopInputs.inputTrigger}
-- Raw Spoken Walkthrough / Transcript Notes: ${sopInputs.voiceNotes}`;
-      }
+      const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
 
-      if (!targetApiKey) {
-        // Mock fallback simulation if no API key is provided
-        await new Promise(res => setTimeout(res, 1200));
-        let mockOutput = `# ${PACKAGES.find(p => p.id === selectedPackageId)?.title.toUpperCase()}\n\n`;
-        mockOutput += `**Client:** ${clientProfile.businessName} (${clientProfile.contactName})\n`;
-        mockOutput += `**Location:** ${clientProfile.location}\n`;
-        mockOutput += `**Date:** ${new Date().toLocaleDateString()}\n\n`;
-        mockOutput += `### Executive Summary & Scope\n`;
-        mockOutput += `Generated asset framework ready for hand-off. Connect your Gemini API Key in the top toolbar to run real-time AI generation.\n\n`;
-        mockOutput += `### Primary Deliverable Matrix\n`;
-        mockOutput += `- **Status:** Verified & Formatted\n- **Target Turnaround:** 48 Hours\n- **Value Tier:** $${PACKAGES.find(p => p.id === selectedPackageId)?.price}\n`;
-        
-        setGeneratedContent(mockOutput);
-      } else {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: `${systemPrompt}\n\n${userContextText}` }]
-            }],
-            generationConfig: {
-              temperature: 0.2,
-              responseMimeType: selectedPackageId === 'financial' ? 'application/json' : 'text/plain'
-            }
-          })
-        });
+      output = `# CLIENT ENGAGEMENT AGREEMENT
+**Consulting Firm:** Rooted Solutions LLC
+**Client Business:** ${clientProfile.businessName}
+**Client Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle})
+**Email:** ${clientProfile.email} | **Phone:** ${clientProfile.phone}
+**Location:** ${clientProfile.location}
+**Date of Agreement:** ${dateStr}
 
-        const data = await response.json();
-        if (data.error) {
-          throw new Error(data.error.message || 'Gemini API Error');
-        }
+---
 
-        const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        setGeneratedContent(rawText);
-      }
+### 1. SERVICES & SCOPE OF WORK
+Rooted Solutions LLC agrees to perform professional consulting services for **${clientProfile.businessName}**. The agreed scope of deliverables includes:
 
-      const endTime = performance.now();
-      setExecutionTime(((endTime - startTime) / 1000).toFixed(2));
-    } catch (err) {
-      setGeneratedContent(`### API Execution Error\n\n\`\`\`\n${err.message}\n\`\`\`\nPlease check your Gemini API key and try again.`);
-    } finally {
-      setIsGenerating(false);
+${includedList || '- Custom Strategic Consulting & Advisory'}
+
+---
+
+### 2. COMPENSATION & PAYMENT TERMS
+- **Total Project Fee:** $${contractInputs.totalContractValue.toLocaleString()} USD
+- **Initial Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD due prior to project commencement.
+- **Payment Structure:** ${contractInputs.paymentTerms}
+
+---
+
+### 3. SPECIFIC DELIVERABLE & TIMELINE NOTES
+${contractInputs.specialTerms}
+
+---
+
+### 4. EXCLUSIONS & CLIENT RESPONSIBILITIES
+${contractInputs.exclusions}
+
+---
+
+### 5. GENERAL TERMS & CONDITIONS
+- **Scope Protection:** Any additions or modifications to the deliverables specified above will be documented in a written Change Order and billed at standard consulting rates.
+- **Intellectual Property:** Upon receipt of final payment, all custom assets created under this Agreement shall belong solely to **${clientProfile.businessName}**.
+- **Confidentiality:** Both parties agree to maintain strict confidentiality regarding proprietary business information, operational data, and financials.
+
+---
+
+### 6. AUTHORIZATION & SIGNATURES
+
+**ACCEPTED AND AGREED:**
+
+**ROOTED SOLUTIONS LLC**
+
+__________________________________________  
+Authorized Representative  
+Date: ${dateStr}  
+
+**CLIENT: ${clientProfile.businessName.toUpperCase()}**
+
+__________________________________________  
+${clientProfile.contactName}, ${contractInputs.clientSignerTitle}  
+Date: ________________________`;
+
+    } else if (selectedPackageId === 'financial') {
+      output = `# BANK-READY FINANCIAL MODEL & FORECAST
+**Client:** ${clientProfile.businessName} (${clientProfile.contactName})
+**Date:** ${dateStr}
+
+---
+
+### 1. REVENUE & UNIT ECONOMICS
+- **Average Price per Job:** $${finInputs.avgJobPrice.toLocaleString()}
+- **Monthly Job Volume:** ${finInputs.monthlyVolume} jobs
+- **Gross Monthly Revenue:** $${finCalculations.grossRev.toLocaleString()}
+- **Annualized Projected Revenue:** $${(finCalculations.grossRev * 12).toLocaleString()}
+
+---
+
+### 2. DIRECT COST & MARGIN STRUCTURE
+- **Direct COGS (${finInputs.cogsPct}%):** $${finCalculations.directCogs.toLocaleString()} / month
+- **Payment Processing (${finInputs.processingFeePct}%):** $${finCalculations.processingFees.toLocaleString()} / month
+- **Gross Monthly Profit:** $${finCalculations.grossProfit.toLocaleString()}
+
+---
+
+### 3. FIXED OPERATING EXPENSES (OPEX)
+${finInputs.opexItems.map(item => `- **${item.name}:** $${item.cost}/month`).join('\n')}
+- **Debt Service / Loan Payments:** $${finInputs.loanPayments}/month
+- **Total Monthly Fixed Operating Expenses:** $${finCalculations.totalFixedOpex.toLocaleString()}
+
+---
+
+### 4. NET PROFIT & BREAK-EVEN ANALYSIS
+- **Net Pre-Tax Profit:** $${finCalculations.netEbit.toLocaleString()} / month
+- **Estimated Tax Reserve (${finInputs.taxReservePct}%):** $${finCalculations.taxReserve.toLocaleString()} / month
+- **Net Owner Take-Home:** $${finCalculations.netTakeHome.toLocaleString()} / month (Net Margin: ${finCalculations.marginPct}%)
+- **Monthly Break-Even Sales Target:** $${finCalculations.breakEvenMonthlyRev.toLocaleString()} / month`;
+
+    } else if (selectedPackageId === 'sop') {
+      output = `# STANDARD OPERATING PROCEDURE (SOP)
+**Document ID:** SOP-${Math.floor(1000 + Math.random() * 9000)}
+**Title:** ${sopInputs.sopTitle}
+**Department:** ${sopInputs.department}
+**Process Owner:** ${sopInputs.processOwner}
+**Systems Used:** ${sopInputs.systemsUsed}
+**Date:** ${dateStr}
+
+---
+
+### 1. PURPOSE & SCOPE
+This document defines the mandatory procedure for completing site diagnostics, presenting quotes, obtaining digital client sign-off, and recording pre-job conditions for ${clientProfile.businessName}.
+
+### 2. TRIGGER & PREREQUISITES
+- **Trigger:** ${sopInputs.inputTrigger}
+
+### 3. STEP-BY-STEP WORKFLOW
+1. **Site Arrival & Customer Greeting:** Arrive within scheduled window. Introduce team lead and outline job diagnostics.
+2. **Initial Diagnostic Checklist:** Perform thorough inspection using approved tablet workflow.
+3. **Menu Option Presentation:** Present standardized pricing packages to client prior to performing work.
+4. **Digital Authorization:** Capture client signature and deposit payment via digital portal.
+5. **Pre-Job Documentation:** Take clear photos of existing conditions and save to job record.
+
+### 4. EXCEPTION HANDLING
+- **Scope Creep / Additional Repairs:** Stop work immediately, explain findings to client, update job order, and secure digital sign-off before proceeding.
+
+### 5. QUALITY CONTROL CHECKLIST
+- [ ] Diagnostic photos uploaded to client profile
+- [ ] Pricing menu reviewed with client
+- [ ] Digital signature captured
+- [ ] Deposit received and verified
+- [ ] Post-job cleanup inspected by crew lead`;
+
+    } else {
+      const activePkg = PACKAGES.find(p => p.id === selectedPackageId);
+      output = `# ${activePkg.title.toUpperCase()}
+**Prepared by:** Rooted Solutions LLC
+**Client:** ${clientProfile.businessName} (${clientProfile.contactName})
+**Date:** ${dateStr}
+
+---
+
+### EXECUTIVE DELIVERABLE OVERVIEW
+This custom strategic document has been compiled for **${clientProfile.businessName}** in accordance with Rooted Solutions LLC consulting standards.
+
+### KEY HIGHLIGHTS & ACTION ITEMS
+1. **Target Deliverable:** ${activePkg.title}
+2. **Service Package Tier:** $${activePkg.price}
+3. **Delivery Status:** Complete & Ready for Implementation
+
+#### Deliverable Checklist:
+${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
+
+---
+*Generated by Rooted Solutions Consulting Engine.*`;
     }
+
+    setGeneratedContent(output);
+    const endTime = performance.now();
+    setExecutionTime(((endTime - startTime) / 1000).toFixed(2));
+    setIsGenerating(false);
   };
 
   const copyToClipboard = () => {
@@ -418,72 +451,40 @@ ${transcriptText}`;
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
       
       {/* TOP HEADER */}
-      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 py-3.5 sticky top-0 z-50">
-        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 py-4 sticky top-0 z-50">
+        <div className="max-w-[1700px] mx-auto flex items-center justify-between">
           
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl text-slate-950 font-black shadow-lg shadow-emerald-500/20">
-              <Cpu className="w-5 h-5" />
+              <Building className="w-6 h-6 text-slate-950" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base font-bold text-slate-100 tracking-tight">Gemini Ops Engine</h1>
-                <span className="text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-semibold">
-                  v2.0 Flash
-                </span>
-              </div>
-              <p className="text-xs text-slate-400">Micro-Consulting & Startup Asset Generator</p>
+              <h1 className="text-lg font-bold text-slate-100 tracking-tight">Rooted Solutions Consulting Tool</h1>
+              <p className="text-xs text-slate-400">Client Intake & Operations Engine</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Model Selector */}
-            <div className="flex items-center bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400 mr-2" />
-              <select
-                value={modelChoice}
-                onChange={(e) => setModelChoice(e.target.value)}
-                className="bg-transparent text-slate-200 focus:outline-none cursor-pointer font-medium"
-              >
-                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
-                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-              </select>
-            </div>
-
-            {/* API Key Input */}
-            <div className="relative flex-1 md:w-64">
-              <input
-                type="password"
-                placeholder="Enter Gemini API Key..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50"
-              />
-              <Lock className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-            </div>
-
-            <a
-              href="https://aistudio.google.com"
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition-colors px-2 py-1"
-            >
-              Get Key <ArrowUpRight className="w-3 h-3" />
-            </a>
+          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            System Active
           </div>
 
         </div>
       </header>
 
-      {/* VALUE LADDER BAR */}
-      <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-3">
-        <div className="max-w-[1700px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
-            <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            Flexible Service Menu:
-          </span>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 w-full">
+      {/* VALUE LADDER BAR: 2 ROWS OF TILES */}
+      <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-4">
+        <div className="max-w-[1700px] mx-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-emerald-400" />
+              Service Deliverable Menu
+            </span>
+            <span className="text-[11px] text-slate-500">Select a deliverable to configure</span>
+          </div>
+
+          {/* 4 COLUMNS x 2 ROWS GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {PACKAGES.map((pkg) => {
               const Icon = pkg.icon;
               const isSelected = selectedPackageId === pkg.id;
@@ -491,18 +492,21 @@ ${transcriptText}`;
                 <button
                   key={pkg.id}
                   onClick={() => setSelectedPackageId(pkg.id)}
-                  className={`flex items-center gap-2 p-2 rounded-xl border text-left transition-all ${
+                  className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
                     isSelected
-                      ? 'bg-emerald-500/15 border-emerald-500/50 text-slate-100 shadow-md shadow-emerald-500/10'
-                      : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 text-slate-400'
+                      ? 'bg-emerald-500/15 border-emerald-500/60 text-slate-100 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/30'
+                      : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:bg-slate-900/60'
                   }`}
                 >
-                  <div className={`p-1.5 rounded-lg shrink-0 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
-                    <Icon className="w-3.5 h-3.5" />
+                  <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <div className="truncate">
-                    <span className="text-[11px] font-bold block truncate text-slate-200">{pkg.title}</span>
-                    <span className="text-[9px] font-mono text-emerald-400 font-semibold">${pkg.price}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-bold truncate text-slate-200">{pkg.title}</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-bold shrink-0">${pkg.price}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{pkg.description}</p>
                   </div>
                 </button>
               );
@@ -529,7 +533,7 @@ ${transcriptText}`;
               </div>
               <div className="text-right shrink-0">
                 <span className="text-2xl font-extrabold text-emerald-400 font-mono">${activePkg.price}</span>
-                <span className="text-[10px] block text-slate-500">48-Hr Delivery</span>
+                <span className="text-[10px] block text-slate-500">Rooted Solutions</span>
               </div>
             </div>
 
@@ -548,14 +552,14 @@ ${transcriptText}`;
             <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
               <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
                 <Building className="w-4 h-4 text-emerald-400" />
-                Client & Business Profile
+                Client Profile
               </h3>
-              <span className="text-[10px] text-slate-500 font-mono">15-Min Intake</span>
+              <span className="text-[10px] text-slate-500 font-mono">General Info</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Business Name</label>
+                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Business Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -568,7 +572,7 @@ ${transcriptText}`;
               </div>
 
               <div>
-                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Owner / Contact</label>
+                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Contact</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -594,7 +598,7 @@ ${transcriptText}`;
               </div>
 
               <div>
-                <label className="text-[11px] font-medium text-slate-400 mb-1 block">City / Service Area</label>
+                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Location / City</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -608,12 +612,12 @@ ${transcriptText}`;
             </div>
           </div>
 
-          {/* DYNAMIC FORM / INTAKE SELECTOR */}
+          {/* DYNAMIC INTAKE SPECIFICATIONS */}
           <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
               <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-emerald-400" />
-                Deliverable Intake Specifications
+                Deliverable Inputs
               </h3>
 
               {/* INPUT MODE TABS */}
@@ -645,7 +649,7 @@ ${transcriptText}`;
               </div>
             </div>
 
-            {/* TAB CONTENT: VOICE / AUDIO RECORDING */}
+            {/* TAB CONTENT: VOICE / AUDIO */}
             {inputTab === 'voice' && (
               <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-4 text-center">
                 <div className="flex flex-col items-center justify-center py-4">
@@ -660,30 +664,105 @@ ${transcriptText}`;
                     {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
                   </button>
                   <span className="text-xs font-mono text-slate-400 mt-3">
-                    {isRecording ? `Recording Live... ${recordingTime}s` : 'Tap to Record Spoken Walkthrough (Gemini Native Audio)'}
+                    {isRecording ? `Recording Live... ${recordingTime}s` : 'Tap to Record Voice Notes'}
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500">
-                  Speak raw notes naturally: "Average job is $1500, we do 8 jobs a month, truck is $850..."
+                  Record key project terms or notes verbally to automatically include in document generation.
                 </p>
               </div>
             )}
 
-            {/* TAB CONTENT: CALL TRANSCRIPT PASTE */}
+            {/* TAB CONTENT: TRANSCRIPT */}
             {inputTab === 'transcript' && (
               <div className="space-y-2">
-                <label className="text-[11px] font-medium text-slate-400 block">Paste Zoom / Teams / Call Transcript (.txt / .vtt)</label>
+                <label className="text-[11px] font-medium text-slate-400 block">Paste Call Notes / Meeting Transcript</label>
                 <textarea
                   rows={6}
                   value={transcriptText}
                   onChange={(e) => setTranscriptText(e.target.value)}
-                  placeholder="Paste unstructured raw call transcript or email notes here..."
+                  placeholder="Paste unstructured raw intake notes here..."
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 font-mono"
                 />
               </div>
             )}
 
-            {/* TAB CONTENT: FORM INPUTS (PACKAGE DEPENDENT) */}
+            {/* TAB CONTENT: FORM INPUTS */}
+            {inputTab === 'form' && selectedPackageId === 'contract' && (
+              <div className="space-y-4">
+                
+                {/* SELECT INCLUDED SERVICES CHECKBOXES */}
+                <div>
+                  <label className="text-[11px] font-medium text-emerald-400 mb-2 block flex items-center gap-1">
+                    <FileCheck2 className="w-3.5 h-3.5" />
+                    Agreed Services to Include in Contract:
+                  </label>
+                  <div className="space-y-1.5 bg-slate-950 border border-slate-800 p-3 rounded-xl max-h-48 overflow-y-auto">
+                    {CONTRACT_SERVICE_OPTIONS.map((opt) => {
+                      const isChecked = contractInputs.selectedServices.includes(opt.id);
+                      return (
+                        <div
+                          key={opt.id}
+                          onClick={() => toggleContractService(opt.id)}
+                          className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-xs transition-colors ${
+                            isChecked ? 'bg-emerald-500/10 text-slate-200 border border-emerald-500/30' : 'text-slate-400 hover:bg-slate-900'
+                          }`}
+                        >
+                          {isChecked ? (
+                            <CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+                          ) : (
+                            <SquareIcon className="w-4 h-4 text-slate-600 shrink-0" />
+                          )}
+                          <span className="truncate font-medium">{opt.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Contact Title</label>
+                    <input
+                      type="text"
+                      value={contractInputs.clientSignerTitle}
+                      onChange={(e) => setContractInputs({ ...contractInputs, clientSignerTitle: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Total Contract Value ($)</label>
+                    <input
+                      type="number"
+                      value={contractInputs.totalContractValue}
+                      onChange={(e) => setContractInputs({ ...contractInputs, totalContractValue: Number(e.target.value) })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500/50"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Payment Schedule & Deposit</label>
+                  <input
+                    type="text"
+                    value={contractInputs.paymentTerms}
+                    onChange={(e) => setContractInputs({ ...contractInputs, paymentTerms: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Deliverable Terms</label>
+                  <textarea
+                    rows={2}
+                    value={contractInputs.specialTerms}
+                    onChange={(e) => setContractInputs({ ...contractInputs, specialTerms: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+              </div>
+            )}
+
             {inputTab === 'form' && selectedPackageId === 'financial' && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
@@ -718,7 +797,7 @@ ${transcriptText}`;
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Stripe %</label>
+                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Processing %</label>
                     <input
                       type="number"
                       value={finInputs.processingFeePct}
@@ -735,40 +814,6 @@ ${transcriptText}`;
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-200 font-mono focus:outline-none"
                     />
                   </div>
-                </div>
-              </div>
-            )}
-
-            {inputTab === 'form' && selectedPackageId === 'contract' && (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Customer Name</label>
-                    <input
-                      type="text"
-                      value={contractInputs.clientName}
-                      onChange={(e) => setContractInputs({ ...contractInputs, clientName: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Total Contract Price ($)</label>
-                    <input
-                      type="number"
-                      value={contractInputs.totalPrice}
-                      onChange={(e) => setContractInputs({ ...contractInputs, totalPrice: Number(e.target.value) })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500/50"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Scope of Work</label>
-                  <textarea
-                    rows={3}
-                    value={contractInputs.scopeDescription}
-                    onChange={(e) => setContractInputs({ ...contractInputs, scopeDescription: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                  />
                 </div>
               </div>
             )}
@@ -796,7 +841,7 @@ ${transcriptText}`;
                   </div>
                 </div>
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Raw Workflow Description</label>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Raw Workflow Walkthrough</label>
                   <textarea
                     rows={3}
                     value={sopInputs.voiceNotes}
@@ -809,75 +854,42 @@ ${transcriptText}`;
 
             {inputTab === 'form' && selectedPackageId === 'branding' && (
               <div className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Brand Tagline / Concept</label>
-                    <input
-                      type="text"
-                      value={brandingInputs.tagline}
-                      onChange={(e) => setBrandingInputs({ ...brandingInputs, tagline: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Target Audience</label>
-                    <input
-                      type="text"
-                      value={brandingInputs.targetAudience}
-                      onChange={(e) => setBrandingInputs({ ...brandingInputs, targetAudience: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Brand Tagline</label>
+                  <input
+                    type="text"
+                    value={brandingInputs.tagline}
+                    onChange={(e) => setBrandingInputs({ ...brandingInputs, tagline: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
+                  />
                 </div>
               </div>
             )}
 
             {inputTab === 'form' && selectedPackageId === 'marketing' && (
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Monthly Ad Budget ($)</label>
-                    <input
-                      type="number"
-                      value={marketingInputs.monthlyBudget}
-                      onChange={(e) => setMarketingInputs({ ...marketingInputs, monthlyBudget: Number(e.target.value) })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Channels</label>
-                    <input
-                      type="text"
-                      value={marketingInputs.mainChannels}
-                      onChange={(e) => setMarketingInputs({ ...marketingInputs, mainChannels: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Growth Offer</label>
+                  <input
+                    type="text"
+                    value={marketingInputs.uniqueOffer}
+                    onChange={(e) => setMarketingInputs({ ...marketingInputs, uniqueOffer: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
+                  />
                 </div>
               </div>
             )}
 
             {inputTab === 'form' && selectedPackageId === 'business_plan' && (
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Capital Required ($)</label>
-                    <input
-                      type="number"
-                      value={bizPlanInputs.fundingRequired}
-                      onChange={(e) => setBizPlanInputs({ ...bizPlanInputs, fundingRequired: Number(e.target.value) })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Use of Funds</label>
-                    <input
-                      type="text"
-                      value={bizPlanInputs.useOfFunds}
-                      onChange={(e) => setBizPlanInputs({ ...bizPlanInputs, useOfFunds: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Capital Required ($)</label>
+                  <input
+                    type="number"
+                    value={bizPlanInputs.fundingRequired}
+                    onChange={(e) => setBizPlanInputs({ ...bizPlanInputs, fundingRequired: Number(e.target.value) })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none"
+                  />
                 </div>
               </div>
             )}
@@ -885,7 +897,7 @@ ${transcriptText}`;
             {inputTab === 'form' && selectedPackageId === 'consulting' && (
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Operations Bottleneck</label>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Bottleneck</label>
                   <input
                     type="text"
                     value={consultingInputs.mainBottleneck}
@@ -898,19 +910,19 @@ ${transcriptText}`;
 
             {/* GENERATE ACTION BUTTON */}
             <button
-              onClick={runGeminiIntakePipeline}
+              onClick={generateDocument}
               disabled={isGenerating}
               className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
             >
               {isGenerating ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  Processing through Gemini 2.0...
+                  Building Document...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Generate {activePkg.title} (${activePkg.price})
+                  Generate {activePkg.title}
                 </>
               )}
             </button>
@@ -918,10 +930,10 @@ ${transcriptText}`;
 
         </section>
 
-        {/* RIGHT COLUMN: GENERATED ASSET WORKSPACE (7 cols) */}
+        {/* RIGHT COLUMN: GENERATED DELIVERABLE OUTPUT (7 cols) */}
         <section className="lg:col-span-7 space-y-6 flex flex-col">
           
-          {/* FINANCIAL LIVE PREVIEW CARDS (ONLY WHEN FINANCIAL SELECTED) */}
+          {/* FINANCIAL PREVIEW CARDS (WHEN FINANCIAL IS ACTIVE) */}
           {selectedPackageId === 'financial' && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
@@ -929,7 +941,7 @@ ${transcriptText}`;
                 <span className="text-base font-bold text-slate-100 font-mono">${finCalculations.grossRev.toLocaleString()}</span>
               </div>
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                <span className="text-[10px] text-slate-400 font-medium block">Monthly Net Take-Home</span>
+                <span className="text-[10px] text-slate-400 font-medium block">Monthly Take-Home</span>
                 <span className="text-base font-bold text-emerald-400 font-mono">${finCalculations.netTakeHome.toLocaleString()}</span>
               </div>
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
@@ -951,7 +963,7 @@ ${transcriptText}`;
               <div className="flex items-center gap-2">
                 <FileCode className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs font-semibold text-slate-200">
-                  {selectedPackageId.toUpperCase()} Deliverable Output
+                  {activePkg.title} Deliverable Document
                 </span>
                 {executionTime && (
                   <span className="text-[10px] font-mono text-slate-500 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
@@ -977,7 +989,7 @@ ${transcriptText}`;
               {isGenerating ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3 py-20">
                   <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
-                  <p className="text-xs">Extracting data & formatting Markdown via Gemini 2.0 Flash...</p>
+                  <p className="text-xs">Formatting document...</p>
                 </div>
               ) : generatedContent ? (
                 <pre className="whitespace-pre-wrap font-mono text-slate-200 selection:bg-emerald-500 selection:text-slate-950">
@@ -989,7 +1001,7 @@ ${transcriptText}`;
                   <div className="text-center">
                     <p className="text-xs font-semibold text-slate-400">Workspace Ready</p>
                     <p className="text-[11px] text-slate-600 mt-1 max-w-sm">
-                      Select a service package from the menu above, review the intake parameters, and click Generate to run the AI engine.
+                      Select a deliverable from the top menu, configure options on the left, and click Generate.
                     </p>
                   </div>
                 </div>
@@ -998,8 +1010,8 @@ ${transcriptText}`;
 
             {/* CANVAS FOOTER BAR */}
             <div className="bg-slate-950/80 px-4 py-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-              <span>Status: {generatedContent ? 'Render Complete' : 'Idle'}</span>
-              <span>48-Hour Zero-Risk Guarantee Active</span>
+              <span>Status: {generatedContent ? 'Render Complete' : 'Ready'}</span>
+              <span>Rooted Solutions LLC</span>
             </div>
 
           </div>
