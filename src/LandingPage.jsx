@@ -606,6 +606,44 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
             </div>
           </div>
 
+          {/* DYNAMIC PROBING QUESTIONS SECTION */}
+          <div className="bg-slate-950/80 border border-emerald-500/20 rounded-xl p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Lightbulb className="w-3.5 h-3.5" />
+                Key Discovery Probing Questions:
+              </span>
+              <span className="text-[9px] font-mono text-slate-500">Ask Client Before Notes</span>
+            </div>
+
+            <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+              {activeProbingQuestions.map((pq, idx) => (
+                <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-2.5 text-xs space-y-0.5">
+                  <span className="font-semibold text-slate-200 block text-[11px]">{pq.question}</span>
+                  <p className="text-[10.5px] text-slate-400 leading-snug">{pq.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* GENERAL INTAKE NOTES TEXT AREA */}
+          <div>
+            <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Terms & Discovery Notes</label>
+            <textarea
+              rows={3}
+              value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
+              onChange={(e) => {
+                if (selectedPackageId === 'contract') {
+                  setContractInputs({ ...contractInputs, specialTerms: e.target.value });
+                } else {
+                  setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
+                }
+              }}
+              placeholder="Record discovery answers, client payment system restrictions, special conditions..."
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+            />
+          </div>
+
           <button
             onClick={generateDocument}
             disabled={isGenerating}
