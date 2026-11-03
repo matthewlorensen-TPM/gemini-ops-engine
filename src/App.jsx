@@ -24,7 +24,9 @@ import {
   FileCode,
   FileCheck2,
   CheckSquare,
-  Square as SquareIcon
+  Square as SquareIcon,
+  ExternalLink,
+  Lightbulb
 } from 'lucide-react';
 
 // ==========================================
@@ -33,96 +35,139 @@ import {
 const PACKAGES = [
   {
     id: 'contract',
-    title: 'Client Engagement Contract',
+    title: 'Simple Work Agreement',
     price: 200,
-    tag: 'Agreement Asset',
+    tag: 'Client Agreement',
     icon: ShieldCheck,
     color: 'teal',
-    description: 'Formal Client Engagement Agreement for Rooted Solutions LLC, detailing agreed services, payment terms, and scope protection.',
-    deliverables: ['Master Engagement Contract', 'Selected Services Schedule', 'Scope Change & Deposit Boilerplate']
+    description: 'Clear, plain-English contract showing agreed work, payment terms, and deposit requirements so everyone stays on the same page.',
+    deliverables: ['Professional Client Agreement', 'Selected Services List', 'Deposit & Extra Work Rules']
   },
   {
     id: 'financial',
-    title: 'Bank-Ready Financial Model',
+    title: 'Simple Numbers & Profit Tracker',
     price: 200,
-    tag: 'Financial Asset',
+    tag: 'Financial Tracker',
     icon: DollarSign,
     color: 'emerald',
-    description: '3-Year P&L, 12-month cash flow forecast, and break-even analysis workbook in Google Sheets.',
-    deliverables: ['Custom Google Sheets Workbook', 'Break-Even & Debt Service Model', 'SBA Loan Ready Summary']
+    description: 'Easy-to-understand monthly profit tracker, job pricing guide, business bills list, and minimum monthly sales goal.',
+    deliverables: ['Simple Google Sheets Tracker', 'Minimum Monthly Sales Goal', 'Bank & Loan Ready Summary']
   },
   {
     id: 'sop',
-    title: 'Single-Workflow SOP Engine',
+    title: 'Step-by-Step How-To Guide',
     price: 200,
-    tag: 'Operations Asset',
+    tag: 'How-To Guide',
     icon: FileText,
     color: 'cyan',
-    description: 'Turn a 15-minute voice recording or call transcript into a clean, step-by-step SOP with QC checklists.',
-    deliverables: ['Formatted Markdown SOP', 'Employee Printable Checklist', 'Exception Handling Matrix']
+    description: 'Turn voice notes or quick phone calls into a clear step-by-step checklist for your crew or staff to follow.',
+    deliverables: ['Easy Printed Checklist', 'Crew Instructions', 'Common Problem Fixes']
   },
   {
     id: 'branding',
-    title: 'Brand Identity & Messaging',
+    title: 'Business Name, Logo & Pitch',
     price: 200,
-    tag: 'Brand Asset',
+    tag: 'Brand Ideas',
     icon: Palette,
     color: 'purple',
-    description: 'Core brand positioning, color palette directives, elevator pitches, and visual prompt guidelines.',
-    deliverables: ['Brand Value Proposition', 'Color Palette & Typography Directives', 'Elevator Pitches & Copy Samples']
+    description: 'Clear business tagline, color style guide, quick elevator pitch, and logo design ideas for your local business.',
+    deliverables: ['Business Tagline & Message', 'Color & Logo Directives', 'Quick Sales Pitches']
   },
   {
     id: 'marketing',
-    title: 'Marketing & Growth Strategy',
+    title: 'Local Customer Lead Plan',
     price: 200,
-    tag: 'Growth Asset',
+    tag: 'Local Leads',
     icon: Target,
     color: 'rose',
-    description: 'Local lead-generation playbook, channel strategy, promo flyer copy, and 30-day action plan.',
-    deliverables: ['Local Outreach Playbook', 'Flyer & Ad Campaign Copy', '30-Day Growth Roadmap']
+    description: 'Simple plan to get local leads, word-of-mouth referrals, direct flyer wording, and a 30-day customer action plan.',
+    deliverables: ['Local Outreach Playbook', 'Flyer & Ad Wording', '30-Day Customer Plan']
   },
   {
     id: 'business_plan',
-    title: 'Business Plan Development',
+    title: 'Simple Business & Loan Plan',
     price: 350,
-    tag: 'Strategy Asset',
+    tag: 'Business Plan',
     icon: Briefcase,
     color: 'indigo',
-    description: 'Complete narrative business plan covering market analysis, revenue model, and operational roadmap.',
-    deliverables: ['Bank & SBA Pitch Narrative', 'Competitor Analysis', 'Operational Risk Strategy']
+    description: 'Straight-to-the-point business plan designed for bank loan officers, partners, or setting your business goals.',
+    deliverables: ['Bank & SBA Loan Narrative', 'Local Competition Overview', 'Simple Financial Strategy']
   },
   {
     id: 'consulting',
-    title: 'General IT / Ops Consulting',
+    title: 'Time-Saver & Tech Audit',
     price: 200,
-    tag: 'Advisory Asset',
+    tag: 'Time Saver',
     icon: Compass,
     color: 'blue',
-    description: 'Tech stack audit, administrative friction diagnostic, and actionable step-by-step advisory report.',
-    deliverables: ['System & Software Audit', 'Process Friction Diagnostic', 'Prioritized Action Plan']
+    description: 'Find out where you are losing hours every week and get a simple list of easy software or apps to fix it.',
+    deliverables: ['Software & App Checkup', 'Weekly Hours Lost Review', 'Easy Step-by-Step Plan']
   },
   {
     id: 'suite',
-    title: 'Full Operations Suite',
+    title: 'Complete Business Starter Pack',
     price: 600,
-    tag: 'Growth Bundle',
+    tag: 'Full Bundle',
     icon: Layers,
     color: 'amber',
-    description: 'Combines Financial Model, Contracts, SOPs, and Strategy into a complete 10-day business launchpad.',
-    deliverables: ['All Core $200 Packages', 'Custom Master Documents', '1-on-1 Strategy Review']
+    description: 'Combines your contract, numbers tracker, how-to guides, and local marketing into one complete 10-day business launch setup.',
+    deliverables: ['All Core $200 Services', 'Custom Master Documents', '1-on-1 Strategy Chat']
   }
 ];
 
 // Available services to pick from when creating a Client Contract
 const CONTRACT_SERVICE_OPTIONS = [
-  { id: 'financial', name: 'Bank-Ready Financial Modeling & P&L Workbook' },
-  { id: 'sop', name: 'Standard Operating Procedure (SOP) Development' },
-  { id: 'branding', name: 'Brand Identity, Messaging & Value Proposition Guide' },
-  { id: 'marketing', name: 'Local Marketing Strategy & Campaign Playbook' },
+  { id: 'financial', name: 'Simple Business Numbers & Monthly Profit Tracker' },
+  { id: 'sop', name: 'Step-by-Step How-To Work Checklists for Crew/Staff' },
+  { id: 'branding', name: 'Business Name, Tagline & Logo Design Guide' },
+  { id: 'marketing', name: 'Local Customer Lead & Ad Campaign Plan' },
   { id: 'business_plan', name: 'Bank-Ready Business Plan Narrative' },
-  { id: 'consulting', name: 'IT Infrastructure & Operations Friction Diagnostic' },
-  { id: 'advisory', name: 'Ongoing Fractional Ops & Strategic Advisory Support' }
+  { id: 'consulting', name: 'Time-Saver Tech & App Recommendation Review' },
+  { id: 'advisory', name: 'Ongoing Monthly Business Support & Check-ins' }
 ];
+
+// Service-Specific Probing Questions & Discovery Checklist
+const PROBING_QUESTIONS = {
+  contract: [
+    { question: "Payment Systems:", detail: "How do you take payments (Stripe, Square, Check, Cash App)? What deposit % is required before work starts?" },
+    { question: "Scope Boundaries:", detail: "What is explicitly NOT included in your services that clients frequently try to ask for?" },
+    { question: "Licensing & Restrictions:", detail: "Are there local permit costs, HOA approvals, or sub-contractor insurance rules required on site?" },
+    { question: "Change Orders:", detail: "If a job runs into unexpected issues, how do you handle pricing updates and approval?" }
+  ],
+  financial: [
+    { question: "Merchant & Processing Fees:", detail: "What exact percentage do you pay on credit card processing (e.g., 2.9% + $0.30)?" },
+    { question: "Fixed Operating Bills:", detail: "What are your exact monthly bills for truck loans, gas, liability insurance, software, and tools?" },
+    { question: "Tax Reserves:", detail: "Do you currently set aside 20-30% of profit in a separate bank account for federal & state taxes?" },
+    { question: "Owner Take-Home Goal:", detail: "What minimum dollar amount do you need to take home every month to cover personal living expenses?" }
+  ],
+  sop: [
+    { question: "Workflow Bottlenecks:", detail: "Where does your team or crew consistently make mistakes or lose time on a job site?" },
+    { question: "Software & App Hand-offs:", detail: "What apps are used from intake to invoice (e.g., Housecall Pro, Jobber, QuickBooks, Google Sheets)?" },
+    { question: "Quality Verification:", detail: "What 5 specific items MUST be checked off and photographed before leaving a customer's property?" },
+    { question: "Exception Protocols:", detail: "What happens if a customer is unhappy or not home when the technician arrives?" }
+  ],
+  branding: [
+    { question: "Target Customer Persona:", detail: "Who is your ideal customer (residential homeowners, commercial property managers, luxury remodels)?" },
+    { question: "Local Competition:", detail: "Who are your top 2 local competitors and what makes your work better or faster?" },
+    { question: "Visual Tone & Colors:", detail: "What feeling should your brand give (dependable & rugged vs. high-end & modern)?" }
+  ],
+  marketing: [
+    { question: "Current Lead Sources:", detail: "Where do your current customers come from (Google Maps, Facebook groups, referrals, flyers)?" },
+    { question: "Customer Acquisition Budget:", detail: "How much are you willing to spend to acquire one paying customer ($50, $100, $200)?" },
+    { question: "Special Opening Hook:", detail: "What quick introductory offer can we run to get new homeowners to call you today?" }
+  ],
+  business_plan: [
+    { question: "Capital & Funding Needed:", detail: "How much capital are you seeking from a bank or investor, and what exact equipment will it buy?" },
+    { question: "Market Size & Location:", detail: "What specific zip codes or counties will you serve, and how many target homes/businesses exist there?" }
+  ],
+  consulting: [
+    { question: "Weekly Hours Lost:", detail: "How many hours per week are spent on admin, writing quotes, chasing unpaid invoices, and scheduling?" },
+    { question: "Software Stack Review:", detail: "What software apps are you paying for monthly that you rarely or never use?" }
+  ],
+  suite: [
+    { question: "Overall Business Strategy:", detail: "What is your main goal for the next 12 months (e.g., hire first employee, buy 2nd truck, double net profit)?" }
+  ]
+};
 
 export default function App() {
   // Navigation & Config State
@@ -133,7 +178,8 @@ export default function App() {
   const [generatedContent, setGeneratedContent] = useState('');
   const [executionTime, setExecutionTime] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [inputTab, setInputTab] = useState('form'); // 'form' | 'voice' | 'transcript'
+  const [docsCopied, setDocsCopied] = useState(false);
+  const [inputTab, setInputTab] = useState('form');
 
   // Client Profile State
   const [clientProfile, setClientProfile] = useState({
@@ -146,13 +192,13 @@ export default function App() {
 
   // Dynamic Form States
   const [contractInputs, setContractInputs] = useState({
-    clientSignerTitle: 'Owner / Principal',
+    clientSignerTitle: 'Owner / Operator',
     totalContractValue: 600,
     depositPct: 50,
-    paymentTerms: '50% deposit upon signing, 50% upon final deliverable approval',
+    paymentTerms: '50% upfront deposit, 50% upon final delivery',
     selectedServices: ['financial', 'sop', 'consulting'],
-    specialTerms: 'Weekly 30-minute status check-ins included during active sprint. Target project completion within 10 business days.',
-    exclusions: 'Software licensing costs, filing fees, and third-party advertising spend are excluded from consulting fees.'
+    specialTerms: 'Includes weekly 30-minute status check-ins while work is underway. Target completion within 10 business days.',
+    exclusions: 'Software subscriptions, state filing fees, and direct ad spending are paid directly by the client.'
   });
 
   const [finInputs, setFinInputs] = useState({
@@ -163,20 +209,20 @@ export default function App() {
     taxReservePct: 25,
     loanPayments: 350,
     opexItems: [
-      { name: 'Commercial Truck & Fuel', cost: 850 },
-      { name: 'General Liability Insurance', cost: 450 },
-      { name: 'Software & Scheduling Apps', cost: 250 },
-      { name: 'Cell & Internet', cost: 150 }
+      { name: 'Truck Fuel & Maintenance', cost: 850 },
+      { name: 'Business Insurance', cost: 450 },
+      { name: 'Software & Phone Apps', cost: 250 },
+      { name: 'Cell Phone & Internet', cost: 150 }
     ]
   });
 
   const [sopInputs, setSopInputs] = useState({
-    department: 'Field Operations',
-    sopTitle: 'Customer Site Intake & Service Approval',
-    processOwner: 'Crew Lead / Operations Manager',
-    systemsUsed: 'Google Sheets, Stripe Reader, Scheduling App',
-    inputTrigger: 'Customer quote signature or deposit confirmation',
-    voiceNotes: 'When a technician arrives on site, perform a 15-minute diagnostic, fill out the digital checklist, review flat-rate pricing options with the customer, obtain digital sign-off prior to commencing work, and document pre-existing job site conditions.'
+    department: 'Field Work',
+    sopTitle: 'Job Site Arrival & Customer Sign-Off',
+    processOwner: 'Lead Tech / Owner',
+    systemsUsed: 'Google Sheets, Card Reader, Phone Scheduling App',
+    inputTrigger: 'Customer accepts estimate or pays deposit',
+    voiceNotes: 'When arriving at a customer site, do a 15-minute walkthrough, fill out the digital checklist, review job options with the homeowner, get a digital sign-off before starting work, and take pre-work photos.'
   });
 
   const [brandingInputs, setBrandingInputs] = useState({
@@ -203,7 +249,7 @@ export default function App() {
     currentTechStack: 'Paper estimates, personal email, manual spreadsheet tracking'
   });
 
-  // Audio Recording & Transcript State
+  // Audio Recording State
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [transcriptText, setTranscriptText] = useState('');
@@ -250,7 +296,7 @@ export default function App() {
     });
   };
 
-  // Toggle Recording Mock / Web Audio
+  // Toggle Recording
   const toggleRecording = () => {
     if (isRecording) {
       clearInterval(timerRef.current);
@@ -269,8 +315,7 @@ export default function App() {
     setIsGenerating(true);
     const startTime = performance.now();
 
-    // Brief UI delay simulation
-    await new Promise(res => setTimeout(res, 800));
+    await new Promise(res => setTimeout(res, 500));
 
     let output = '';
     const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -282,57 +327,72 @@ export default function App() {
         .join('\n');
 
       const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
+      const remainingBalance = contractInputs.totalContractValue - depositAmount;
 
-      output = `# CLIENT ENGAGEMENT AGREEMENT
-**Consulting Firm:** Rooted Solutions LLC
-**Client Business:** ${clientProfile.businessName}
-**Client Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle})
-**Email:** ${clientProfile.email} | **Phone:** ${clientProfile.phone}
-**Location:** ${clientProfile.location}
-**Date of Agreement:** ${dateStr}
+      output = `# CLIENT SERVICES & CONSULTING AGREEMENT
 
----
-
-### 1. SERVICES & SCOPE OF WORK
-Rooted Solutions LLC agrees to perform professional consulting services for **${clientProfile.businessName}**. The agreed scope of deliverables includes:
-
-${includedList || '- Custom Strategic Consulting & Advisory'}
+**PROVIDER:** Rooted Solutions LLC  
+**CLIENT:** ${clientProfile.businessName}  
+**DATE:** ${dateStr}  
 
 ---
 
-### 2. COMPENSATION & PAYMENT TERMS
-- **Total Project Fee:** $${contractInputs.totalContractValue.toLocaleString()} USD
-- **Initial Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD due prior to project commencement.
+### PARTIES & CONTACT DETAILS
+
+| PROVIDER INFORMATION | CLIENT INFORMATION |
+| :--- | :--- |
+| **Company:** Rooted Solutions LLC | **Company:** ${clientProfile.businessName} |
+| **Representative:** Matthew Lorensen | **Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle}) |
+| **Service Region:** Colorado, USA | **Location:** ${clientProfile.location} |
+| **Contact Email:** info@rootedsolutions.com | **Contact Email:** ${clientProfile.email} |
+| **Contact Phone:** (720) 555-0199 | **Contact Phone:** ${clientProfile.phone} |
+
+---
+
+### 1. SCOPE OF AGREED SERVICES
+Rooted Solutions LLC shall perform the following customized business advisory deliverables for **${clientProfile.businessName}**:
+
+${includedList || '- Custom Business Advisory & Setup'}
+
+---
+
+### 2. INVESTMENT & PAYMENT TERMS
+
+- **Total Contract Price:** $${contractInputs.totalContractValue.toLocaleString()} USD
+- **Upfront Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD (Due prior to project launch)
+- **Remaining Balance:** $${remainingBalance.toLocaleString()} USD (Due upon final deliverable hand-off)
 - **Payment Structure:** ${contractInputs.paymentTerms}
 
 ---
 
-### 3. SPECIFIC DELIVERABLE & TIMELINE NOTES
-${contractInputs.specialTerms}
+### 3. TIMELINE & PROJECT MILESTONES
+- **Project Kickoff:** Immediately following receipt of deposit and completed intake profile.
+- **Communication Schedule:** ${contractInputs.specialTerms}
 
 ---
 
-### 4. EXCLUSIONS & CLIENT RESPONSIBILITIES
+### 4. EXCLUSIONS & BOUNDARIES
 ${contractInputs.exclusions}
 
 ---
 
-### 5. GENERAL TERMS & CONDITIONS
-- **Scope Protection:** Any additions or modifications to the deliverables specified above will be documented in a written Change Order and billed at standard consulting rates.
-- **Intellectual Property:** Upon receipt of final payment, all custom assets created under this Agreement shall belong solely to **${clientProfile.businessName}**.
-- **Confidentiality:** Both parties agree to maintain strict confidentiality regarding proprietary business information, operational data, and financials.
+### 5. GENERAL BUSINESS TERMS
+- **Scope Changes:** Any services requested outside this agreement will be documented in a separate written addendum.
+- **Intellectual Property:** Upon final payment receipt, all custom documents, models, and checklists belong 100% to **${clientProfile.businessName}**.
+- **Confidentiality:** Rooted Solutions LLC maintains strict non-disclosure of all client financial numbers and business processes.
 
 ---
 
 ### 6. AUTHORIZATION & SIGNATURES
 
-**ACCEPTED AND AGREED:**
+By signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.
 
 **ROOTED SOLUTIONS LLC**
 
 __________________________________________  
 Authorized Representative  
 Date: ${dateStr}  
+
 
 **CLIENT: ${clientProfile.businessName.toUpperCase()}**
 
@@ -341,96 +401,96 @@ ${clientProfile.contactName}, ${contractInputs.clientSignerTitle}
 Date: ________________________`;
 
     } else if (selectedPackageId === 'financial') {
-      output = `# BANK-READY FINANCIAL MODEL & FORECAST
-**Client:** ${clientProfile.businessName} (${clientProfile.contactName})
+      output = `# SIMPLE NUMBERS & PROFIT TRACKER
+**Business:** ${clientProfile.businessName} (${clientProfile.contactName})
 **Date:** ${dateStr}
 
 ---
 
-### 1. REVENUE & UNIT ECONOMICS
+### 1. MONTHLY SALES & JOB PRICING
 - **Average Price per Job:** $${finInputs.avgJobPrice.toLocaleString()}
-- **Monthly Job Volume:** ${finInputs.monthlyVolume} jobs
-- **Gross Monthly Revenue:** $${finCalculations.grossRev.toLocaleString()}
-- **Annualized Projected Revenue:** $${(finCalculations.grossRev * 12).toLocaleString()}
+- **Jobs Done Per Month:** ${finInputs.monthlyVolume} jobs
+- **Total Monthly Sales:** $${finCalculations.grossRev.toLocaleString()}
+- **Estimated Yearly Sales:** $${(finCalculations.grossRev * 12).toLocaleString()}
 
 ---
 
-### 2. DIRECT COST & MARGIN STRUCTURE
-- **Direct COGS (${finInputs.cogsPct}%):** $${finCalculations.directCogs.toLocaleString()} / month
-- **Payment Processing (${finInputs.processingFeePct}%):** $${finCalculations.processingFees.toLocaleString()} / month
-- **Gross Monthly Profit:** $${finCalculations.grossProfit.toLocaleString()}
+### 2. DIRECT JOB COSTS
+- **Materials & Supplies (${finInputs.cogsPct}%):** $${finCalculations.directCogs.toLocaleString()} / month
+- **Card Payment Fees (${finInputs.processingFeePct}%):** $${finCalculations.processingFees.toLocaleString()} / month
+- **Money Left After Job Costs:** $${finCalculations.grossProfit.toLocaleString()} / month
 
 ---
 
-### 3. FIXED OPERATING EXPENSES (OPEX)
+### 3. MONTHLY BUSINESS BILLS (FIXED EXPENDITURES)
 ${finInputs.opexItems.map(item => `- **${item.name}:** $${item.cost}/month`).join('\n')}
-- **Debt Service / Loan Payments:** $${finInputs.loanPayments}/month
-- **Total Monthly Fixed Operating Expenses:** $${finCalculations.totalFixedOpex.toLocaleString()}
+- **Equipment / Loan Payments:** $${finInputs.loanPayments}/month
+- **Total Monthly Business Bills:** $${finCalculations.totalFixedOpex.toLocaleString()}
 
 ---
 
-### 4. NET PROFIT & BREAK-EVEN ANALYSIS
-- **Net Pre-Tax Profit:** $${finCalculations.netEbit.toLocaleString()} / month
-- **Estimated Tax Reserve (${finInputs.taxReservePct}%):** $${finCalculations.taxReserve.toLocaleString()} / month
-- **Net Owner Take-Home:** $${finCalculations.netTakeHome.toLocaleString()} / month (Net Margin: ${finCalculations.marginPct}%)
-- **Monthly Break-Even Sales Target:** $${finCalculations.breakEvenMonthlyRev.toLocaleString()} / month`;
+### 4. MONEY YOU KEEP & MINIMUM SALES GOAL
+- **Profit Before Taxes:** $${finCalculations.netEbit.toLocaleString()} / month
+- **Tax Savings Set-Aside (${finInputs.taxReservePct}%):** $${finCalculations.taxReserve.toLocaleString()} / month
+- **Estimated Money You Keep (Take-Home):** $${finCalculations.netTakeHome.toLocaleString()} / month (${finCalculations.marginPct}% profit margin)
+- **Minimum Monthly Sales Goal (Break-Even):** $${finCalculations.breakEvenMonthlyRev.toLocaleString()} / month`;
 
     } else if (selectedPackageId === 'sop') {
-      output = `# STANDARD OPERATING PROCEDURE (SOP)
-**Document ID:** SOP-${Math.floor(1000 + Math.random() * 9000)}
+      output = `# STEP-BY-STEP HOW-TO GUIDE
+**Guide ID:** GUIDE-${Math.floor(1000 + Math.random() * 9000)}
 **Title:** ${sopInputs.sopTitle}
-**Department:** ${sopInputs.department}
-**Process Owner:** ${sopInputs.processOwner}
-**Systems Used:** ${sopInputs.systemsUsed}
+**Department / Area:** ${sopInputs.department}
+**Who Manages This:** ${sopInputs.processOwner}
+**Apps / Tools Used:** ${sopInputs.systemsUsed}
 **Date:** ${dateStr}
 
 ---
 
-### 1. PURPOSE & SCOPE
-This document defines the mandatory procedure for completing site diagnostics, presenting quotes, obtaining digital client sign-off, and recording pre-job conditions for ${clientProfile.businessName}.
+### 1. WHY WE DO THIS
+This guide lays out the step-by-step steps for completing site diagnostics, giving quotes, getting customer sign-off, and taking pre-job photos for ${clientProfile.businessName}.
 
-### 2. TRIGGER & PREREQUISITES
+### 2. WHEN TO START THIS PROCESS
 - **Trigger:** ${sopInputs.inputTrigger}
 
-### 3. STEP-BY-STEP WORKFLOW
-1. **Site Arrival & Customer Greeting:** Arrive within scheduled window. Introduce team lead and outline job diagnostics.
-2. **Initial Diagnostic Checklist:** Perform thorough inspection using approved tablet workflow.
-3. **Menu Option Presentation:** Present standardized pricing packages to client prior to performing work.
-4. **Digital Authorization:** Capture client signature and deposit payment via digital portal.
-5. **Pre-Job Documentation:** Take clear photos of existing conditions and save to job record.
+### 3. STEP-BY-STEP INSTRUCTIONS
+1. **Arrive & Greet:** Arrive on time, introduce yourself, and walk the customer through what you will be inspecting.
+2. **Check the Site:** Run through your standard job checklist on your phone or tablet.
+3. **Show Pricing Options:** Show the customer clear, upfront pricing before starting any work.
+4. **Get Digital Sign-Off:** Get the customer's signature and deposit on your phone/tablet.
+5. **Take Photos:** Take clear photos of existing site conditions and save them to the job file.
 
-### 4. EXCEPTION HANDLING
-- **Scope Creep / Additional Repairs:** Stop work immediately, explain findings to client, update job order, and secure digital sign-off before proceeding.
+### 4. HOW TO HANDLE PROBLEMS OR SCOPE CHANGES
+- **Unexpected Work Needed:** Stop work immediately, explain the issue to the customer, show them the updated price, and get sign-off before doing any extra work.
 
-### 5. QUALITY CONTROL CHECKLIST
-- [ ] Diagnostic photos uploaded to client profile
-- [ ] Pricing menu reviewed with client
-- [ ] Digital signature captured
-- [ ] Deposit received and verified
-- [ ] Post-job cleanup inspected by crew lead`;
+### 5. QUICK QUALITY CHECKLIST
+- [ ] Job photos saved to customer file
+- [ ] Upfront pricing reviewed with customer
+- [ ] Digital signature collected
+- [ ] Deposit payment verified
+- [ ] Work area cleaned up before leaving site`;
 
     } else {
       const activePkg = PACKAGES.find(p => p.id === selectedPackageId);
       output = `# ${activePkg.title.toUpperCase()}
 **Prepared by:** Rooted Solutions LLC
-**Client:** ${clientProfile.businessName} (${clientProfile.contactName})
+**Prepared for:** ${clientProfile.businessName} (${clientProfile.contactName})
 **Date:** ${dateStr}
 
 ---
 
-### EXECUTIVE DELIVERABLE OVERVIEW
-This custom strategic document has been compiled for **${clientProfile.businessName}** in accordance with Rooted Solutions LLC consulting standards.
+### SUMMARY OVERVIEW
+This practical business document was created specifically for **${clientProfile.businessName}** to help keep operations simple, organized, and profitable.
 
-### KEY HIGHLIGHTS & ACTION ITEMS
-1. **Target Deliverable:** ${activePkg.title}
-2. **Service Package Tier:** $${activePkg.price}
-3. **Delivery Status:** Complete & Ready for Implementation
+### KEY HIGHLIGHTS & DELIVERABLES
+1. **Deliverable Name:** ${activePkg.title}
+2. **Package Price:** $${activePkg.price}
+3. **Status:** Ready for Action
 
-#### Deliverable Checklist:
+#### Included Items:
 ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
 
 ---
-*Generated by Rooted Solutions Consulting Engine.*`;
+*Created by Rooted Solutions Small Business Tool.*`;
     }
 
     setGeneratedContent(output);
@@ -445,7 +505,128 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Convert Markdown into Executive HTML for Google Docs pasting
+  const convertToExecutiveHtml = (text) => {
+    let html = text
+      .replace(/^# (.*$)/gim, '<h1 style="color: #065f46; font-size: 22pt; font-family: Arial, sans-serif; font-weight: bold; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-top: 10px; margin-bottom: 15px; text-transform: uppercase;">$1</h1>')
+      .replace(/^### (.*$)/gim, '<h2 style="color: #0f172a; font-size: 13pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 22px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; text-transform: uppercase;">$1</h2>')
+      .replace(/^## (.*$)/gim, '<h3 style="color: #047857; font-size: 11pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 16px; margin-bottom: 8px;">$1</h3>')
+      .replace(/^---$/gim, '<hr style="border: none; border-top: 1px solid #94a3b8; margin: 24px 0;" />')
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      .replace(/^- (.*$)/gim, '<li style="margin-bottom: 6px; font-family: Arial, sans-serif; font-size: 10.5pt; color: #334155;">$1</li>');
+
+    // Convert Markdown Table for Google Docs
+    if (html.includes('| PROVIDER INFORMATION |')) {
+      const tableHtml = `
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: Arial, sans-serif; font-size: 10pt;">
+          <thead>
+            <tr style="background-color: #065f46; color: #ffffff;">
+              <th style="padding: 10px; text-align: left; border: 1px solid #065f46; width: 50%;">PROVIDER INFORMATION</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #065f46; width: 50%;">CLIENT INFORMATION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background-color: #f8fafc;">
+              <td style="padding: 10px; border: 1px solid #cbd5e1; vertical-align: top;">
+                <strong>Company:</strong> Rooted Solutions LLC<br/>
+                <strong>Representative:</strong> Matthew Lorensen<br/>
+                <strong>Region:</strong> Colorado, USA<br/>
+                <strong>Email:</strong> info@rootedsolutions.com<br/>
+                <strong>Phone:</strong> (720) 555-0199
+              </td>
+              <td style="padding: 10px; border: 1px solid #cbd5e1; vertical-align: top;">
+                <strong>Company:</strong> ${clientProfile.businessName}<br/>
+                <strong>Representative:</strong> ${clientProfile.contactName} (${contractInputs.clientSignerTitle})<br/>
+                <strong>Location:</strong> ${clientProfile.location}<br/>
+                <strong>Email:</strong> ${clientProfile.email}<br/>
+                <strong>Phone:</strong> ${clientProfile.phone}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      html = html.replace(/\| PROVIDER INFORMATION \|[\s\S]*?\| \(720\) 555-0199 \|/gim, tableHtml);
+    }
+
+    // Convert Investment Section into a Highlighted Executive Callout Box
+    if (html.includes('INVESTMENT & PAYMENT TERMS')) {
+      const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
+      const remainingBalance = contractInputs.totalContractValue - depositAmount;
+      const calloutBox = `
+        <div style="background-color: #f0fdf4; border: 2px solid #10b981; border-radius: 8px; padding: 16px; margin: 18px 0; font-family: Arial, sans-serif;">
+          <div style="font-size: 12pt; font-weight: bold; color: #065f46; margin-bottom: 8px;">FINANCIAL SUMMARY & DEPOSIT</div>
+          <div style="font-size: 11pt; color: #1e293b; margin-bottom: 4px;"><strong>Total Contract Price:</strong> $${contractInputs.totalContractValue.toLocaleString()} USD</div>
+          <div style="font-size: 11pt; color: #047857; font-weight: bold; margin-bottom: 4px;"><strong>Upfront Deposit Required (${contractInputs.depositPct}%):</strong> $${depositAmount.toLocaleString()} USD</div>
+          <div style="font-size: 10.5pt; color: #475569;"><strong>Remaining Balance:</strong> $${remainingBalance.toLocaleString()} USD</div>
+          <div style="font-size: 10pt; color: #64748b; margin-top: 6px; border-top: 1px solid #bbf7d0; padding-top: 6px;"><strong>Payment Terms:</strong> ${contractInputs.paymentTerms}</div>
+        </div>
+      `;
+      html = html.replace(/- \*\*Total Contract Price:\*\*[\s\S]*?- \*\*Payment Structure:\*\* .*/gim, calloutBox);
+    }
+
+    // Convert Signatures into a Professional 2-Column Signature Block Table
+    if (html.includes('AUTHORIZATION & SIGNATURES')) {
+      const sigBlock = `
+        <table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-family: Arial, sans-serif; font-size: 10pt;">
+          <tr>
+            <td style="width: 48%; vertical-align: top; padding-right: 15px;">
+              <strong style="color: #0f172a; font-size: 11pt;">ROOTED SOLUTIONS LLC</strong><br/><br/><br/>
+              <div style="border-top: 1px solid #334155; padding-top: 5px;">
+                <strong>Authorized Representative Signature</strong><br/>
+                <span style="color: #64748b; font-size: 9pt;">Date: ${new Date().toLocaleDateString()}</span>
+              </div>
+            </td>
+            <td style="width: 4%;"></td>
+            <td style="width: 48%; vertical-align: top; padding-left: 15px;">
+              <strong style="color: #0f172a; font-size: 11pt;">${clientProfile.businessName.toUpperCase()}</strong><br/><br/><br/>
+              <div style="border-top: 1px solid #334155; padding-top: 5px;">
+                <strong>${clientProfile.contactName}, ${contractInputs.clientSignerTitle}</strong><br/>
+                <span style="color: #64748b; font-size: 9pt;">Date: ________________________</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+      `;
+      html = html.replace(/AUTHORIZATION & SIGNATURES[\s\S]*/gim, 'AUTHORIZATION & SIGNATURES<br/>By signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.<br/>' + sigBlock);
+    }
+
+    // Group List Items
+    html = html.replace(/(<li style=".*?">.*?<\/li>)/gim, '<ul style="margin-top: 6px; margin-bottom: 14px; padding-left: 22px;">$1</ul>');
+    html = html.replace(/<\/ul>\s*<ul style=".*?">/gim, '');
+
+    return `
+      <div style="font-family: Arial, sans-serif; font-size: 10.5pt; color: #1e293b; line-height: 1.6; max-width: 800px; margin: 0 auto;">
+        ${html}
+      </div>
+    `;
+  };
+
+  // ONE-CLICK GOOGLE DOCS WORKFLOW WITH RICH HTML PASTE FORMATTING
+  const openInGoogleDocs = async () => {
+    if (!generatedContent) return;
+
+    const htmlContent = convertToExecutiveHtml(generatedContent);
+
+    try {
+      const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+      const blobText = new Blob([generatedContent], { type: 'text/plain' });
+      const item = new ClipboardItem({
+        'text/html': blobHtml,
+        'text/plain': blobText
+      });
+      await navigator.clipboard.write([item]);
+    } catch (e) {
+      await navigator.clipboard.writeText(generatedContent);
+    }
+
+    setDocsCopied(true);
+    setTimeout(() => setDocsCopied(false), 3000);
+
+    window.open('https://docs.new', '_blank');
+  };
+
   const activePkg = PACKAGES.find(p => p.id === selectedPackageId) || PACKAGES[0];
+  const activeProbingQuestions = PROBING_QUESTIONS[selectedPackageId] || PROBING_QUESTIONS.contract;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
@@ -695,7 +876,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                 <div>
                   <label className="text-[11px] font-medium text-emerald-400 mb-2 block flex items-center gap-1">
                     <FileCheck2 className="w-3.5 h-3.5" />
-                    Agreed Services to Include in Contract:
+                    Services Included in This Contract:
                   </label>
                   <div className="space-y-1.5 bg-slate-950 border border-slate-800 p-3 rounded-xl max-h-48 overflow-y-auto">
                     {CONTRACT_SERVICE_OPTIONS.map((opt) => {
@@ -731,7 +912,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Total Contract Value ($)</label>
+                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Total Contract Price ($)</label>
                     <input
                       type="number"
                       value={contractInputs.totalContractValue}
@@ -742,22 +923,12 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Payment Schedule & Deposit</label>
+                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Payment Terms & Upfront Deposit</label>
                   <input
                     type="text"
                     value={contractInputs.paymentTerms}
                     onChange={(e) => setContractInputs({ ...contractInputs, paymentTerms: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Deliverable Terms</label>
-                  <textarea
-                    rows={2}
-                    value={contractInputs.specialTerms}
-                    onChange={(e) => setContractInputs({ ...contractInputs, specialTerms: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
@@ -776,7 +947,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Monthly Jobs Count</label>
+                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Jobs Done Per Month</label>
                     <input
                       type="number"
                       value={finInputs.monthlyVolume}
@@ -788,7 +959,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
 
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">COGS %</label>
+                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Supplies %</label>
                     <input
                       type="number"
                       value={finInputs.cogsPct}
@@ -797,7 +968,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Processing %</label>
+                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Card Fee %</label>
                     <input
                       type="number"
                       value={finInputs.processingFeePct}
@@ -806,7 +977,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Tax Reserve %</label>
+                    <label className="text-[10px] font-medium text-slate-400 mb-1 block">Tax Savings %</label>
                     <input
                       type="number"
                       value={finInputs.taxReservePct}
@@ -839,15 +1010,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
                     />
                   </div>
-                </div>
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Raw Workflow Walkthrough</label>
-                  <textarea
-                    rows={3}
-                    value={sopInputs.voiceNotes}
-                    onChange={(e) => setSopInputs({ ...sopInputs, voiceNotes: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                  />
                 </div>
               </div>
             )}
@@ -908,6 +1070,44 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               </div>
             )}
 
+            {/* DYNAMIC PROBING QUESTIONS SECTION */}
+            <div className="bg-slate-950/80 border border-emerald-500/20 rounded-xl p-3.5 space-y-2.5">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  Key Discovery Probing Questions:
+                </span>
+                <span className="text-[9px] font-mono text-slate-500">Ask Client Before Notes</span>
+              </div>
+
+              <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                {activeProbingQuestions.map((pq, idx) => (
+                  <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-2.5 text-xs space-y-0.5">
+                    <span className="font-semibold text-slate-200 block text-[11px]">{pq.question}</span>
+                    <p className="text-[10.5px] text-slate-400 leading-snug">{pq.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* GENERAL INTAKE NOTES TEXT AREA */}
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Terms & Discovery Notes</label>
+              <textarea
+                rows={3}
+                value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
+                onChange={(e) => {
+                  if (selectedPackageId === 'contract') {
+                    setContractInputs({ ...contractInputs, specialTerms: e.target.value });
+                  } else {
+                    setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
+                  }
+                }}
+                placeholder="Record discovery answers, client payment system restrictions, special conditions..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+
             {/* GENERATE ACTION BUTTON */}
             <button
               onClick={generateDocument}
@@ -917,7 +1117,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               {isGenerating ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  Building Document...
+                  Formatting Executive Agreement...
                 </>
               ) : (
                 <>
@@ -937,19 +1137,19 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
           {selectedPackageId === 'financial' && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                <span className="text-[10px] text-slate-400 font-medium block">Gross Monthly Rev</span>
+                <span className="text-[10px] text-slate-400 font-medium block">Total Monthly Sales</span>
                 <span className="text-base font-bold text-slate-100 font-mono">${finCalculations.grossRev.toLocaleString()}</span>
               </div>
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                <span className="text-[10px] text-slate-400 font-medium block">Monthly Take-Home</span>
+                <span className="text-[10px] text-slate-400 font-medium block">Money You Keep</span>
                 <span className="text-base font-bold text-emerald-400 font-mono">${finCalculations.netTakeHome.toLocaleString()}</span>
               </div>
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                <span className="text-[10px] text-slate-400 font-medium block">Net Margin %</span>
+                <span className="text-[10px] text-slate-400 font-medium block">Profit Margin %</span>
                 <span className="text-base font-bold text-teal-300 font-mono">{finCalculations.marginPct}%</span>
               </div>
               <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                <span className="text-[10px] text-slate-400 font-medium block">Break-Even Sales Target</span>
+                <span className="text-[10px] text-slate-400 font-medium block">Minimum Sales Goal</span>
                 <span className="text-base font-bold text-amber-400 font-mono">${finCalculations.breakEvenMonthlyRev.toLocaleString()}</span>
               </div>
             </div>
@@ -958,8 +1158,8 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
           {/* DELIVERABLE CANVAS CONTAINER */}
           <div className="flex-1 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-sm min-h-[550px]">
             
-            {/* CANVAS BAR */}
-            <div className="bg-slate-950/80 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between">
+            {/* CANVAS BAR WITH RICH GOOGLE DOCS BUTTON */}
+            <div className="bg-slate-950/80 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <FileCode className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs font-semibold text-slate-200">
@@ -973,6 +1173,18 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               </div>
 
               <div className="flex items-center gap-2">
+                {/* OPEN IN GOOGLE DOCS BUTTON */}
+                <button
+                  onClick={openInGoogleDocs}
+                  disabled={!generatedContent}
+                  title="Copies rich formatted contract HTML to clipboard and opens Google Docs ready to paste (Ctrl + V)"
+                  className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm shadow-emerald-500/10 disabled:opacity-40"
+                >
+                  {docsCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <ExternalLink className="w-3.5 h-3.5" />}
+                  {docsCopied ? 'Formatted & Copied!' : 'Open in Google Docs'}
+                </button>
+
+                {/* COPY BUTTON */}
                 <button
                   onClick={copyToClipboard}
                   disabled={!generatedContent}
@@ -989,7 +1201,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               {isGenerating ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3 py-20">
                   <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
-                  <p className="text-xs">Formatting document...</p>
+                  <p className="text-xs">Structuring executive agreement...</p>
                 </div>
               ) : generatedContent ? (
                 <pre className="whitespace-pre-wrap font-mono text-slate-200 selection:bg-emerald-500 selection:text-slate-950">
