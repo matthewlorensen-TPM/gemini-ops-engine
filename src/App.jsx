@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   ShieldCheck,
   DollarSign,
@@ -22,23 +22,10 @@ import {
   UserCheck,
   Sliders,
   Layers,
-  Mic,
-  Square,
   Copy,
   RefreshCw,
-  User,
-  MapPin,
-  Calculator,
-  Palette,
-  Briefcase,
-  Compass,
-  FileCode,
-  FileCheck2,
-  CheckSquare,
-  Square as SquareIcon,
   ExternalLink,
-  Lightbulb,
-  AlertCircle
+  Lightbulb
 } from 'lucide-react';
 
 // ==========================================
@@ -75,14 +62,14 @@ const PACKAGES = [
     icon: FileText,
     color: 'cyan',
     description: 'Turn voice notes or quick phone calls into a clear step-by-step checklist for your crew or staff to follow.',
-    deliverables: ['Easy Printed Checklist', 'Crew Instructions', 'Customer Data Intake SOP']
+    deliverables: ['Easy Printed Checklist', 'Crew Instructions', 'Common Problem Fixes']
   },
   {
     id: 'branding',
     title: 'Business Name, Logo & Pitch',
     price: 200,
     tag: 'Brand Ideas',
-    icon: Palette,
+    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>,
     color: 'purple',
     description: 'Clear business tagline, color style guide, quick elevator pitch, and logo design ideas for your local business.',
     deliverables: ['Business Tagline & Message', 'Color & Logo Directives', 'Quick Sales Pitches']
@@ -102,7 +89,7 @@ const PACKAGES = [
     title: 'Simple Business & Loan Plan',
     price: 350,
     tag: 'Business Plan',
-    icon: Briefcase,
+    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
     color: 'indigo',
     description: 'Straight-to-the-point business plan designed for bank loan officers, partners, or setting your business goals.',
     deliverables: ['Bank & SBA Loan Narrative', 'Local Competition Overview', 'Simple Financial Strategy']
@@ -112,7 +99,7 @@ const PACKAGES = [
     title: 'Time-Saver & Tech Audit',
     price: 200,
     tag: 'Time Saver',
-    icon: Compass,
+    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>,
     color: 'blue',
     description: 'Find out where you are losing hours every week and get a simple list of easy software or apps to fix it.',
     deliverables: ['Software & App Checkup', 'Weekly Hours Lost Review', 'Easy Step-by-Step Plan']
@@ -153,9 +140,9 @@ const PROBING_QUESTIONS = {
     { question: "Owner Take-Home Goal:", detail: "What minimum dollar amount do you need to take home every month to cover personal living expenses?" }
   ],
   sop: [
-    { question: "Customer Data Points:", detail: "What specific contact, property access, utility shutoff, or billing details MUST be recorded before starting?" },
     { question: "Workflow Bottlenecks:", detail: "Where does your team or crew consistently make mistakes or lose time on a job site?" },
-    { question: "Quality & Photo Proof:", detail: "What pre-existing damage photos and customer approvals must be saved before leaving?" },
+    { question: "Software & App Hand-offs:", detail: "What apps are used from intake to invoice (e.g., Housecall Pro, Jobber, QuickBooks, Google Sheets)?" },
+    { question: "Quality Verification:", detail: "What 5 specific items MUST be checked off and photographed before leaving a customer's property?" },
     { question: "Exception Protocols:", detail: "What happens if a customer is unhappy or not home when the technician arrives?" }
   ],
   branding: [
@@ -181,6 +168,10 @@ const PROBING_QUESTIONS = {
   ]
 };
 
+// SVG Fallback for Document Icon to prevent Lucide version conflicts
+const DocumentIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
+const CodeIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
+
 // ==========================================
 // BRAND LOGO COMPONENT WITH FALLBACK
 // ==========================================
@@ -190,7 +181,7 @@ function BrandLogo({ size = "w-9 h-9" }) {
   if (hasError) {
     return (
       <div className={`${size} p-1.5 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl text-slate-950 flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0`}>
-        <Building className="w-5 h-5 text-slate-950" />
+        <Building className="w-full h-full text-slate-950 p-1" />
       </div>
     );
   }
@@ -198,7 +189,7 @@ function BrandLogo({ size = "w-9 h-9" }) {
   return (
     <img
       src="/logo.jpg"
-      alt="Rooted Solutions LLC"
+      alt="Rooted Solutions"
       onError={() => setHasError(true)}
       className={`${size} rounded-full object-cover border border-emerald-500/40 shadow-md shadow-emerald-500/20 shrink-0`}
     />
@@ -206,61 +197,26 @@ function BrandLogo({ size = "w-9 h-9" }) {
 }
 
 // ==========================================
-// MAIN COMBINED COMPONENT
+// INLINE APP CONSOLE COMPONENT
 // ==========================================
-export default function App() {
-  // Navigation View Toggle ('landing' or 'console')
-  const [activeView, setActiveView] = useState('landing');
+function AppConsole() {
+  const [selectedPackageId, setSelectedPackageId] = React.useState('contract');
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [generatedContent, setGeneratedContent] = React.useState('');
+  const [executionTime, setExecutionTime] = React.useState(null);
+  const [copied, setCopied] = React.useState(false);
 
-  // Admin Leads Drawer State
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [adminPin, setAdminPin] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [savedLeads, setSavedLeads] = useState(() => {
-    try {
-      const stored = localStorage.getItem('rooted_leads');
-      return stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  // Lead Intake Form State
-  const [formData, setFormData] = useState({
-    name: '',
-    businessName: '',
-    phone: '',
-    email: '',
-    packageInterest: 'Complete Business Starter Pack ($600)',
-    notes: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
-
-  // Webhook URL for Google Sheet Integration
-  const GOOGLE_SHEET_WEBHOOK_URL = '';
-
-  // Console State
-  const [selectedPackageId, setSelectedPackageId] = useState('contract');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState('');
-  const [executionTime, setExecutionTime] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [docsCopied, setDocsCopied] = useState(false);
-  const [inputTab, setInputTab] = useState('form');
-
-  // Client Profile State
-  const [clientProfile, setClientProfile] = useState({
+  const [clientProfile, setClientProfile] = React.useState({
     businessName: 'Apex Plumbing & HVAC',
     contactName: 'John Smith',
     email: 'john@apexplumbingco.com',
     phone: '(303) 555-0192',
-    location: 'Adams County, CO'
+    address: '1420 E 104th Ave, Thornton CO',
+    website: 'www.apexplumbingco.com',
+    socialMedia: 'FB/IG: @apexplumbingco'
   });
 
-  // Form Inputs for Deliverables
-  const [contractInputs, setContractInputs] = useState({
+  const [contractInputs, setContractInputs] = React.useState({
     clientSignerTitle: 'Owner / Operator',
     totalContractValue: 600,
     depositPct: 50,
@@ -270,7 +226,7 @@ export default function App() {
     exclusions: 'Software subscriptions, state filing fees, and direct ad spending are paid directly by the client.'
   });
 
-  const [finInputs, setFinInputs] = useState({
+  const [finInputs, setFinInputs] = React.useState({
     avgJobPrice: 1500,
     monthlyVolume: 8,
     cogsPct: 20,
@@ -285,57 +241,332 @@ export default function App() {
     ]
   });
 
-  const [sopInputs, setSopInputs] = useState({
+  const [sopInputs, setSopInputs] = React.useState({
     department: 'Field Work',
-    sopTitle: 'Job Site Arrival & Customer Data Intake',
+    sopTitle: 'Job Site Arrival & Customer Sign-Off',
     processOwner: 'Lead Tech / Owner',
     systemsUsed: 'Google Sheets, Card Reader, Phone Scheduling App',
     inputTrigger: 'Customer accepts estimate or pays deposit',
-    voiceNotes: 'When arriving at a customer site, do a 15-minute walkthrough, verify primary billing contact, collect gate/entry codes, record main water/power shutoff locations, document pre-existing wear, review job options with the homeowner, get a digital sign-off before starting work, and take pre-work photos.'
+    voiceNotes: 'When arriving at a customer site, do a 15-minute walkthrough, fill out the digital checklist, review job options with the homeowner, get a digital sign-off before starting work, and take pre-work photos.'
   });
 
-  // Voice & Transcript State
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [transcriptText, setTranscriptText] = useState('');
-  const timerRef = useRef(null);
+  const generateDocument = async () => {
+    setIsGenerating(true);
+    const startTime = performance.now();
+    await new Promise(res => setTimeout(res, 500));
 
-  // Financial Live Calculations
-  const finCalculations = useMemo(() => {
-    const grossRev = finInputs.avgJobPrice * finInputs.monthlyVolume;
-    const directCogs = grossRev * (finInputs.cogsPct / 100);
-    const processingFees = grossRev * (finInputs.processingFeePct / 100);
-    const grossProfit = grossRev - directCogs - processingFees;
-    
-    const opexSum = finInputs.opexItems.reduce((acc, item) => acc + (Number(item.cost) || 0), 0);
-    const totalFixedOpex = opexSum + Number(finInputs.loanPayments);
-    const netEbit = grossProfit - totalFixedOpex;
-    const taxReserve = netEbit > 0 ? netEbit * (finInputs.taxReservePct / 100) : 0;
-    const netTakeHome = netEbit - taxReserve;
-    const marginPct = grossRev > 0 ? ((netTakeHome / grossRev) * 100).toFixed(1) : 0;
-    const contributionMarginPct = 1 - (finInputs.cogsPct / 100) - (finInputs.processingFeePct / 100);
-    const breakEvenMonthlyRev = contributionMarginPct > 0 ? Math.round(totalFixedOpex / contributionMarginPct) : 0;
+    let output = '';
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    return {
-      grossRev,
-      directCogs,
-      processingFees,
-      grossProfit,
-      totalFixedOpex,
-      netEbit,
-      taxReserve,
-      netTakeHome,
-      marginPct,
-      breakEvenMonthlyRev
-    };
-  }, [finInputs]);
+    if (selectedPackageId === 'contract') {
+      const includedList = CONTRACT_SERVICE_OPTIONS
+        .filter(opt => contractInputs.selectedServices.includes(opt.id))
+        .map(opt => `- **${opt.name}**`)
+        .join('\n');
 
-  // Lead Submission
-  const handleLeadSubmit = async (e) => {
+      const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
+      const remainingBalance = contractInputs.totalContractValue - depositAmount;
+
+      output = `# CLIENT SERVICES & CONSULTING AGREEMENT\n\n**PROVIDER:** Rooted Solutions\n**CLIENT:** ${clientProfile.businessName}  \n**DATE:** ${dateStr}  \n\n---\n\n### PARTIES & CONTACT DETAILS\n\n| PROVIDER INFORMATION | CLIENT INFORMATION |\n| :--- | :--- |\n| **Company:** Rooted Solutions | **Company:** ${clientProfile.businessName} |\n| **Representative:** Matthew Lorensen | **Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle}) |\n| **Service Region:** Colorado, USA | **Address:** ${clientProfile.address} |\n| **Contact Email:** info@rootedsolutions.com | **Contact Email:** ${clientProfile.email} |\n| **Contact Phone:** (720) 555-0199 | **Contact Phone:** ${clientProfile.phone} |\n\n---\n\n### 1. SCOPE OF AGREED SERVICES\nRooted Solutions shall perform the following customized business advisory deliverables for **${clientProfile.businessName}**:\n\n${includedList || '- Custom Business Advisory & Setup'}\n\n---\n\n### 2. INVESTMENT & PAYMENT TERMS\n\n- **Total Contract Price:** $${contractInputs.totalContractValue.toLocaleString()} USD\n- **Upfront Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD (Due prior to project launch)\n- **Remaining Balance:** $${remainingBalance.toLocaleString()} USD (Due upon final deliverable hand-off)\n- **Payment Structure:** ${contractInputs.paymentTerms}\n\n---\n\n### 3. TIMELINE & PROJECT MILESTONES\n- **Project Kickoff:** Immediately following receipt of deposit and completed intake profile.\n- **Communication Schedule:** ${contractInputs.specialTerms}\n\n---\n\n### 4. EXCLUSIONS & BOUNDARIES\n${contractInputs.exclusions}\n\n---\n\n### 5. GENERAL BUSINESS TERMS\n- **Scope Changes:** Any services requested outside this agreement will be documented in a separate written addendum.\n- **Intellectual Property:** Upon final payment receipt, all custom documents, models, and checklists belong 100% to **${clientProfile.businessName}**.\n- **Confidentiality:** Rooted Solutions maintains strict non-disclosure of all client financial numbers and business processes.\n\n---\n\n### 6. AUTHORIZATION & SIGNATURES\n\nBy signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.\n\n**ROOTED SOLUTIONS**\n\n__________________________________________  \nAuthorized Representative  \nDate: ${dateStr}  \n\n\n**CLIENT: ${clientProfile.businessName.toUpperCase()}**\n\n__________________________________________  \n${clientProfile.contactName}, ${contractInputs.clientSignerTitle}  \nDate: ________________________`;
+    } else if (selectedPackageId === 'sop') {
+      output = `# STEP-BY-STEP HOW-TO GUIDE\n**Guide ID:** GUIDE-${Math.floor(1000 + Math.random() * 9000)}\n**Title:** ${sopInputs.sopTitle}\n**Department / Area:** ${sopInputs.department}\n**Who Manages This:** ${sopInputs.processOwner}\n**Apps / Tools Used:** ${sopInputs.systemsUsed}\n**Date:** ${dateStr}\n\n---\n\n### 1. WHY WE DO THIS\nThis guide lays out the step-by-step steps for completing site diagnostics, giving quotes, getting customer sign-off, and taking pre-job photos for ${clientProfile.businessName}.\n\n### 2. WHEN TO START THIS PROCESS\n- **Trigger:** ${sopInputs.inputTrigger}\n\n### 3. STEP-BY-STEP INSTRUCTIONS\n1. **Arrive & Greet:** Arrive on time, introduce yourself, and walk the customer through what you will be inspecting.\n2. **Check the Site:** Run through your standard job checklist on your phone or tablet.\n3. **Show Pricing Options:** Show the customer clear, upfront pricing before starting any work.\n4. **Get Digital Sign-Off:** Get the customer's signature and deposit on your phone/tablet.\n5. **Take Photos:** Take clear photos of existing site conditions and save them to the job file.\n\n### 4. HOW TO HANDLE PROBLEMS OR SCOPE CHANGES\n- **Unexpected Work Needed:** Stop work immediately, explain the issue to the customer, show them the updated price, and get sign-off before doing any extra work.\n\n### 5. QUICK QUALITY CHECKLIST\n- [ ] Job photos saved to customer file\n- [ ] Upfront pricing reviewed with customer\n- [ ] Digital signature collected\n- [ ] Deposit payment verified\n- [ ] Work area cleaned up before leaving site`;
+    } else {
+      const activePkg = PACKAGES.find(p => p.id === selectedPackageId);
+      output = `# ${activePkg.title.toUpperCase()}\n**Prepared by:** Rooted Solutions\n**Prepared for:** ${clientProfile.businessName} (${clientProfile.contactName})\n**Date:** ${dateStr}\n\n---\n\n### SUMMARY OVERVIEW\nThis practical business document was created specifically for **${clientProfile.businessName}** to help keep operations simple, organized, and profitable.\n\n### KEY HIGHLIGHTS & DELIVERABLES\n1. **Deliverable Name:** ${activePkg.title}\n2. **Package Price:** $${activePkg.price}\n3. **Status:** Ready for Action\n\n#### Included Items:\n${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}\n\n---\n*Created by Rooted Solutions Small Business Tool.*`;
+    }
+
+    setGeneratedContent(output);
+    const endTime = performance.now();
+    setExecutionTime(((endTime - startTime) / 1000).toFixed(2));
+    setIsGenerating(false);
+  };
+
+  const exportToGoogleDocs = () => {
+    navigator.clipboard.writeText(generatedContent);
+    setCopied(true);
+    window.open('https://docs.new', '_blank');
+    setTimeout(() => setCopied(false), 3000);
+  };
+
+  const activePkg = PACKAGES.find(p => p.id === selectedPackageId) || PACKAGES[0];
+  const activeProbingQuestions = PROBING_QUESTIONS[selectedPackageId] || PROBING_QUESTIONS.contract;
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+      
+      {/* CONSOLE HEADER */}
+      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 py-4 sticky top-0 z-50">
+        <div className="max-w-[1700px] mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BrandLogo size="w-9 h-9" />
+            <div>
+              <h1 className="text-lg font-bold text-slate-100 tracking-tight">Rooted Solutions Consulting Tool</h1>
+              <p className="text-xs text-slate-400">Client Intake & Operations Engine</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            System Active
+          </div>
+        </div>
+      </header>
+
+      {/* CLIENT PROFILE (TOP BAR) - MOVED FROM GRID */}
+      <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-4">
+        <div className="max-w-[1700px] mx-auto space-y-4">
+          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+            <Building className="w-4 h-4 text-emerald-400" />
+            Client Profile (CRM)
+          </h3>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Business Name</label>
+              <input
+                type="text"
+                value={clientProfile.businessName}
+                onChange={(e) => setClientProfile({ ...clientProfile, businessName: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Contact</label>
+              <input
+                type="text"
+                value={clientProfile.contactName}
+                onChange={(e) => setClientProfile({ ...clientProfile, contactName: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Email</label>
+              <input
+                type="email"
+                value={clientProfile.email}
+                onChange={(e) => setClientProfile({ ...clientProfile, email: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Phone Number</label>
+              <input
+                type="tel"
+                value={clientProfile.phone}
+                onChange={(e) => setClientProfile({ ...clientProfile, phone: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+
+            <div className="sm:col-span-2 lg:col-span-2">
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Full Address</label>
+              <input
+                type="text"
+                value={clientProfile.address}
+                onChange={(e) => setClientProfile({ ...clientProfile, address: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Website</label>
+              <input
+                type="text"
+                value={clientProfile.website}
+                onChange={(e) => setClientProfile({ ...clientProfile, website: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Social Media Links / Handles</label>
+              <input
+                type="text"
+                value={clientProfile.socialMedia}
+                onChange={(e) => setClientProfile({ ...clientProfile, socialMedia: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN WORKSPACE */}
+      <main className="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+        
+        {/* ROW 1: MENU & PROBING QUESTIONS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* SERVICE DELIVERABLE MENU (MOVED TO GRID) */}
+          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4 h-full flex flex-col shadow-inner">
+            <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
+              <span className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-emerald-400" />
+                Service Deliverable Menu
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-1">
+              {PACKAGES.map((pkg) => {
+                const Icon = pkg.icon;
+                const isSelected = selectedPackageId === pkg.id;
+                return (
+                  <button
+                    key={pkg.id}
+                    onClick={() => setSelectedPackageId(pkg.id)}
+                    className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
+                      isSelected
+                        ? 'bg-emerald-500/15 border-emerald-500/60 text-slate-100 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/30'
+                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:bg-slate-900/60'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-xs font-bold truncate text-slate-200">{pkg.title}</span>
+                        <span className="text-[10px] font-mono text-emerald-400 font-bold shrink-0">${pkg.price}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{pkg.description}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* DYNAMIC PROBING QUESTIONS SECTION */}
+          <div className="bg-slate-950/80 border border-emerald-500/20 rounded-2xl p-5 space-y-3 h-full flex flex-col shadow-inner">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                <Lightbulb className="w-4 h-4" />
+                Key Discovery Probing Questions
+              </span>
+              <span className="text-[10px] font-mono text-slate-500">Ask Client Before Notes</span>
+            </div>
+
+            <div className="space-y-3 overflow-y-auto pr-1 flex-1 max-h-72">
+              {activeProbingQuestions.map((pq, idx) => (
+                <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-3 text-xs space-y-1">
+                  <span className="font-semibold text-slate-200 block text-xs">{pq.question}</span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">{pq.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2: GENERAL INTAKE NOTES */}
+        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
+          <label className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+            <FileText className="w-4 h-4 text-emerald-400" />
+            Special Terms & Discovery Notes
+          </label>
+          <textarea
+            rows={4}
+            value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
+            onChange={(e) => {
+              if (selectedPackageId === 'contract') {
+                setContractInputs({ ...contractInputs, specialTerms: e.target.value });
+              } else {
+                setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
+              }
+            }}
+            placeholder="Record discovery answers, client payment system restrictions, special conditions..."
+            className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/50 resize-y"
+          />
+        </div>
+
+        {/* ROW 3: GENERATE ACTION BUTTON */}
+        <button
+          onClick={generateDocument}
+          disabled={isGenerating}
+          className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold py-4 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-wider"
+        >
+          {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+          Generate {activePkg.title} Deliverable
+        </button>
+
+        {/* ROW 4: DOCUMENT GENERATOR CANVAS */}
+        <div className="flex-1 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-sm min-h-[500px]">
+          <div className="bg-slate-950/80 px-6 py-4 border-b border-slate-800/80 flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+              <CodeIcon className="w-4 h-4 text-emerald-400" />
+              {activePkg.title} Output Preview
+            </span>
+            <div className="flex items-center gap-3">
+              {executionTime && (
+                <span className="text-[10px] font-mono text-slate-500 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
+                  Generated in {executionTime}s
+                </span>
+              )}
+              <button
+                onClick={exportToGoogleDocs}
+                disabled={!generatedContent}
+                className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/40 rounded-lg text-emerald-400 text-xs font-bold flex items-center gap-2 hover:bg-emerald-500 hover:text-slate-950 transition-all disabled:opacity-30"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
+                {copied ? 'Copied & Opening...' : 'Open in Google Docs'}
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex-1 p-6 overflow-y-auto font-mono text-sm text-slate-300 leading-relaxed bg-[#0a0f18]">
+            {generatedContent ? (
+              <pre className="whitespace-pre-wrap font-mono text-slate-200 max-w-4xl mx-auto">{generatedContent}</pre>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-4 py-20">
+                <DocumentIcon className="w-12 h-12 text-slate-700" />
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-slate-400">Workspace Ready</p>
+                  <p className="text-xs text-slate-600 mt-1 max-w-md">
+                    Complete your discovery notes above and click the generate button to view the output.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+      </main>
+    </div>
+  );
+}
+
+// ==========================================
+// MAIN EXPORT (LANDING PAGE + APP CONSOLE)
+// ==========================================
+export default function LandingPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    businessName: '',
+    phone: '',
+    email: '',
+    packageInterest: 'Complete Business Starter Pack ($600)',
+    notes: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConsole, setShowConsole] = useState(false);
+  const [formError, setFormError] = useState('');
+
+  const GOOGLE_SHEET_WEBHOOK_URL = '';
+
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [adminPin, setAdminPin] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [savedLeads, setSavedLeads] = useState(() => {
+    try {
+      const stored = localStorage.getItem('rooted_leads');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitError(null);
-
+    setFormError('');
+    
     const newLead = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
@@ -344,7 +575,7 @@ export default function App() {
 
     const updatedLeads = [newLead, ...savedLeads];
     setSavedLeads(updatedLeads);
-
+    
     try {
       localStorage.setItem('rooted_leads', JSON.stringify(updatedLeads));
     } catch (err) {
@@ -353,15 +584,15 @@ export default function App() {
 
     if (GOOGLE_SHEET_WEBHOOK_URL) {
       try {
-        await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+        const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
         });
       } catch (err) {
-        console.error('Failed to post lead to Google Sheet:', err);
-        setSubmitError('Note: Saved locally, but failed to sync to Google Drive.');
+        console.error('Failed to post lead to Google Drive Sheet:', err);
+        setFormError('Warning: Could not connect to the remote database, but your lead was saved locally!');
       }
     }
 
@@ -408,381 +639,34 @@ export default function App() {
     localStorage.setItem('rooted_leads', JSON.stringify(filtered));
   };
 
-  const toggleContractService = (serviceId) => {
-    setContractInputs(prev => {
-      const exists = prev.selectedServices.includes(serviceId);
-      const updated = exists
-        ? prev.selectedServices.filter(id => id !== serviceId)
-        : [...prev.selectedServices, serviceId];
-      return { ...prev, selectedServices: updated };
-    });
-  };
-
-  const toggleRecording = () => {
-    if (isRecording) {
-      clearInterval(timerRef.current);
-      setIsRecording(false);
-    } else {
-      setIsRecording(true);
-      setRecordingTime(0);
-      timerRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-    }
-  };
-
-  // Generate Deliverables
-  const generateDocument = async () => {
-    setIsGenerating(true);
-    const startTime = performance.now();
-    await new Promise(res => setTimeout(res, 500));
-
-    let output = '';
-    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-    if (selectedPackageId === 'contract') {
-      const includedList = CONTRACT_SERVICE_OPTIONS
-        .filter(opt => contractInputs.selectedServices.includes(opt.id))
-        .map(opt => `- **${opt.name}**`)
-        .join('\n');
-
-      const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
-      const remainingBalance = contractInputs.totalContractValue - depositAmount;
-
-      output = `# CLIENT SERVICES & CONSULTING AGREEMENT
-
-**PROVIDER:** Rooted Solutions LLC  
-**CLIENT:** ${clientProfile.businessName}  
-**DATE:** ${dateStr}  
-
----
-
-### PARTIES & CONTACT DETAILS
-
-| PROVIDER INFORMATION | CLIENT INFORMATION |
-| :--- | :--- |
-| **Company:** Rooted Solutions LLC | **Company:** ${clientProfile.businessName} |
-| **Representative:** Matthew Lorensen | **Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle}) |
-| **Service Region:** Colorado, USA | **Location:** ${clientProfile.location} |
-| **Contact Email:** info@rootedsolutions.com | **Contact Email:** ${clientProfile.email} |
-| **Contact Phone:** (720) 555-0199 | **Contact Phone:** ${clientProfile.phone} |
-
----
-
-### 1. SCOPE OF AGREED SERVICES
-Rooted Solutions LLC shall perform the following customized business advisory deliverables for **${clientProfile.businessName}**:
-
-${includedList || '- Custom Business Advisory & Setup'}
-
----
-
-### 2. INVESTMENT & PAYMENT TERMS
-
-- **Total Contract Price:** $${contractInputs.totalContractValue.toLocaleString()} USD
-- **Upfront Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD (Due prior to project launch)
-- **Remaining Balance:** $${remainingBalance.toLocaleString()} USD (Due upon final deliverable hand-off)
-- **Payment Structure:** ${contractInputs.paymentTerms}
-
----
-
-### 3. TIMELINE & PROJECT MILESTONES
-- **Project Kickoff:** Immediately following receipt of deposit and completed intake profile.
-- **Communication Schedule:** ${contractInputs.specialTerms}
-
----
-
-### 4. EXCLUSIONS & BOUNDARIES
-${contractInputs.exclusions}
-
----
-
-### 5. GENERAL BUSINESS TERMS
-- **Scope Changes:** Any services requested outside this agreement will be documented in a separate written addendum.
-- **Intellectual Property:** Upon final payment receipt, all custom documents, models, and checklists belong 100% to **${clientProfile.businessName}**.
-- **Confidentiality:** Rooted Solutions LLC maintains strict non-disclosure of all client financial numbers and business processes.
-
----
-
-### 6. AUTHORIZATION & SIGNATURES
-
-By signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.
-
-**ROOTED SOLUTIONS LLC**
-
-__________________________________________  
-Authorized Representative  
-Date: ${dateStr}  
-
-
-**CLIENT: ${clientProfile.businessName.toUpperCase()}**
-
-__________________________________________  
-${clientProfile.contactName}, ${contractInputs.clientSignerTitle}  
-Date: ________________________`;
-    } else if (selectedPackageId === 'financial') {
-      output = `# SIMPLE NUMBERS & PROFIT TRACKER
-**Business:** ${clientProfile.businessName} (${clientProfile.contactName})
-**Date:** ${dateStr}
-
----
-
-### 1. MONTHLY SALES & JOB PRICING
-- **Average Price per Job:** $${finInputs.avgJobPrice.toLocaleString()}
-- **Jobs Done Per Month:** ${finInputs.monthlyVolume} jobs
-- **Total Monthly Sales:** $${finCalculations.grossRev.toLocaleString()}
-- **Estimated Yearly Sales:** $${(finCalculations.grossRev * 12).toLocaleString()}
-
----
-
-### 2. DIRECT JOB COSTS
-- **Materials & Supplies (${finInputs.cogsPct}%):** $${finCalculations.directCogs.toLocaleString()} / month
-- **Card Payment Fees (${finInputs.processingFeePct}%):** $${finCalculations.processingFees.toLocaleString()} / month
-- **Money Left After Job Costs:** $${finCalculations.grossProfit.toLocaleString()} / month
-
----
-
-### 3. MONTHLY BUSINESS BILLS (FIXED EXPENDITURES)
-${finInputs.opexItems.map(item => `- **${item.name}:** $${item.cost}/month`).join('\n')}
-- **Equipment / Loan Payments:** $${finInputs.loanPayments}/month
-- **Total Monthly Business Bills:** $${finCalculations.totalFixedOpex.toLocaleString()}
-
----
-
-### 4. MONEY YOU KEEP & MINIMUM SALES GOAL
-- **Profit Before Taxes:** $${finCalculations.netEbit.toLocaleString()} / month
-- **Tax Savings Set-Aside (${finInputs.taxReservePct}%):** $${finCalculations.taxReserve.toLocaleString()} / month
-- **Estimated Money You Keep (Take-Home):** $${finCalculations.netTakeHome.toLocaleString()} / month (${finCalculations.marginPct}% profit margin)
-- **Minimum Monthly Sales Goal (Break-Even):** $${finCalculations.breakEvenMonthlyRev.toLocaleString()} / month`;
-    } else if (selectedPackageId === 'sop') {
-      output = `# STEP-BY-STEP HOW-TO GUIDE & CUSTOMER INTAKE SOP
-**Guide ID:** GUIDE-${Math.floor(1000 + Math.random() * 9000)}
-**Title:** ${sopInputs.sopTitle}
-**Department / Area:** ${sopInputs.department}
-**Who Manages This:** ${sopInputs.processOwner}
-**Apps / Tools Used:** ${sopInputs.systemsUsed}
-**Date:** ${dateStr}
-
----
-
-### 1. WHY WE DO THIS
-This guide lays out the step-by-step instructions for arriving on site, verifying essential customer information, inspecting property constraints, locking in pricing approval, and gathering full documentation before work begins for **${clientProfile.businessName}**.
-
----
-
-### 2. WHEN TO START THIS PROCESS
-- **Trigger:** ${sopInputs.inputTrigger}
-
----
-
-### 3. MANDATORY CUSTOMER DATA TO COLLECT ON SITE
-Before turning a wrench or starting work, technicians/staff MUST collect and log the following data points in the client app/file:
-
-#### A. Contact & Account Verification
-- **Full Customer Legal Name:** Verify correct spelling for contract & invoicing.
-- **Primary On-Site Phone Number:** Cell phone for text status updates.
-- **Billing Email Address:** Direct email for digital receipts & invoices.
-- **Secondary / Emergency Contact:** Name & phone of authorized spouse, property manager, or tenant on site.
-
-#### B. Property & Location Data
-- **Exact Job Site Address:** Include unit numbers, building identifiers, or gate/door access codes.
-- **Parking & Staging Restrictions:** Note HOA rules, street parking permits, or loading dock hours.
-- **Utility & Emergency Shutoff Locations:**
-  - Main Water Shutoff Valve location & accessibility.
-  - Main Electrical Breaker Box location & panel amperage rating.
-  - Gas Shutoff Valve location (if applicable).
-
-#### C. Pre-Existing Site Conditions & Photo Proof
-- **Pre-Work Photo Audit:** Take a minimum of 4 clear photos showing pre-existing wear, scratches, cracks, or water stains.
-- **Equipment Serial & Model Numbers:** Record details of existing units being serviced or replaced.
-
----
-
-### 4. STEP-BY-STEP INSTRUCTIONS
-1. **Arrive & Greet:** Arrive on time, introduce yourself, and confirm the primary contact name.
-2. **Collect Required Data:** Run through Section 3 above and record all contact, property access, and utility shutoff data in your mobile app.
-3. **Conduct Pre-Work Photo Audit:** Photograph pre-existing conditions and save photos directly into the job file.
-4. **Inspect the Work Area:** Walk the site, check electrical/plumbing lines, and verify job requirements.
-5. **Present Upfront Pricing & Scope:** Review flat-rate pricing options with the customer before starting work.
-6. **Obtain Digital Signature & Deposit:** Get the customer's signature on the digital agreement and process the required deposit.
-
----
-
-### 5. HOW TO HANDLE PROBLEMS OR SCOPE CHANGES
-- **Unexpected Issues Discovered:** Stop work immediately. Document the issue with photos, explain the findings to the customer, present an updated change order price, and obtain a signed digital approval before performing any additional work.
-
----
-
-### 6. MANDATORY DATA & QUALITY CHECKLIST
-- [ ] Primary billing email and emergency contact phone number verified
-- [ ] Gate / access codes and parking rules recorded
-- [ ] Main water & electrical shutoff locations identified & logged
-- [ ] Pre-existing site condition photos taken and attached to job file
-- [ ] Customer signed upfront estimate & deposit verified
-- [ ] Work area cleaned and final sign-off collected upon completion`;
-    } else {
-      const activePkg = PACKAGES.find(p => p.id === selectedPackageId);
-      output = `# ${activePkg.title.toUpperCase()}
-**Prepared by:** Rooted Solutions LLC
-**Prepared for:** ${clientProfile.businessName} (${clientProfile.contactName})
-**Date:** ${dateStr}
-
----
-
-### SUMMARY OVERVIEW
-This practical business document was created specifically for **${clientProfile.businessName}** to help keep operations simple, organized, and profitable.
-
-### KEY HIGHLIGHTS & DELIVERABLES
-1. **Deliverable Name:** ${activePkg.title}
-2. **Package Price:** $${activePkg.price}
-3. **Status:** Ready for Action
-
-#### Included Items:
-${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
-
----
-*Created by Rooted Solutions Small Business Tool.*`;
-    }
-
-    setGeneratedContent(output);
-    const endTime = performance.now();
-    setExecutionTime(((endTime - startTime) / 1000).toFixed(2));
-    setIsGenerating(false);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedContent);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const convertToExecutiveHtml = (text) => {
-    let html = text
-      .replace(/^# (.*$)/gim, '<h1 style="color: #065f46; font-size: 22pt; font-family: Arial, sans-serif; font-weight: bold; border-bottom: 2px solid #10b981; padding-bottom: 8px; margin-top: 10px; margin-bottom: 15px; text-transform: uppercase;">$1</h1>')
-      .replace(/^### (.*$)/gim, '<h2 style="color: #0f172a; font-size: 13pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 22px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; text-transform: uppercase;">$1</h2>')
-      .replace(/^## (.*$)/gim, '<h3 style="color: #047857; font-size: 11pt; font-family: Arial, sans-serif; font-weight: bold; margin-top: 16px; margin-bottom: 8px;">$1</h3>')
-      .replace(/^---$/gim, '<hr style="border: none; border-top: 1px solid #94a3b8; margin: 24px 0;" />')
-      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-      .replace(/^- (.*$)/gim, '<li style="margin-bottom: 6px; font-family: Arial, sans-serif; font-size: 10.5pt; color: #334155;">$1</li>');
-
-    if (html.includes('| PROVIDER INFORMATION |')) {
-      const tableHtml = `
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: Arial, sans-serif; font-size: 10pt;">
-          <thead>
-            <tr style="background-color: #065f46; color: #ffffff;">
-              <th style="padding: 10px; text-align: left; border: 1px solid #065f46; width: 50%;">PROVIDER INFORMATION</th>
-              <th style="padding: 10px; text-align: left; border: 1px solid #065f46; width: 50%;">CLIENT INFORMATION</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="background-color: #f8fafc;">
-              <td style="padding: 10px; border: 1px solid #cbd5e1; vertical-align: top;">
-                <strong>Company:</strong> Rooted Solutions LLC<br/>
-                <strong>Representative:</strong> Matthew Lorensen<br/>
-                <strong>Region:</strong> Colorado, USA<br/>
-                <strong>Email:</strong> info@rootedsolutions.com<br/>
-                <strong>Phone:</strong> (720) 555-0199
-              </td>
-              <td style="padding: 10px; border: 1px solid #cbd5e1; vertical-align: top;">
-                <strong>Company:</strong> ${clientProfile.businessName}<br/>
-                <strong>Representative:</strong> ${clientProfile.contactName} (${contractInputs.clientSignerTitle})<br/>
-                <strong>Location:</strong> ${clientProfile.location}<br/>
-                <strong>Email:</strong> ${clientProfile.email}<br/>
-                <strong>Phone:</strong> ${clientProfile.phone}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      `;
-      html = html.replace(/\| PROVIDER INFORMATION \|[\s\S]*?\| \(720\) 555-0199 \|/gim, tableHtml);
-    }
-
-    if (html.includes('INVESTMENT & PAYMENT TERMS')) {
-      const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
-      const remainingBalance = contractInputs.totalContractValue - depositAmount;
-      const calloutBox = `
-        <div style="background-color: #f0fdf4; border: 2px solid #10b981; border-radius: 8px; padding: 16px; margin: 18px 0; font-family: Arial, sans-serif;">
-          <div style="font-size: 12pt; font-weight: bold; color: #065f46; margin-bottom: 8px;">FINANCIAL SUMMARY & DEPOSIT</div>
-          <div style="font-size: 11pt; color: #1e293b; margin-bottom: 4px;"><strong>Total Contract Price:</strong> $${contractInputs.totalContractValue.toLocaleString()} USD</div>
-          <div style="font-size: 11pt; color: #047857; font-weight: bold; margin-bottom: 4px;"><strong>Upfront Deposit Required (${contractInputs.depositPct}%):</strong> $${depositAmount.toLocaleString()} USD</div>
-          <div style="font-size: 10.5pt; color: #475569;"><strong>Remaining Balance:</strong> $${remainingBalance.toLocaleString()} USD</div>
-          <div style="font-size: 10pt; color: #64748b; margin-top: 6px; border-top: 1px solid #bbf7d0; padding-top: 6px;"><strong>Payment Terms:</strong> ${contractInputs.paymentTerms}</div>
-        </div>
-      `;
-      html = html.replace(/- \*\*Total Contract Price:\*\*[\s\S]*?- \*\*Payment Structure:\*\* .*/gim, calloutBox);
-    }
-
-    if (html.includes('AUTHORIZATION & SIGNATURES')) {
-      const sigBlock = `
-        <table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-family: Arial, sans-serif; font-size: 10pt;">
-          <tr>
-            <td style="width: 48%; vertical-align: top; padding-right: 15px;">
-              <strong style="color: #0f172a; font-size: 11pt;">ROOTED SOLUTIONS LLC</strong><br/><br/><br/>
-              <div style="border-top: 1px solid #334155; padding-top: 5px;">
-                <strong>Authorized Representative Signature</strong><br/>
-                <span style="color: #64748b; font-size: 9pt;">Date: ${new Date().toLocaleDateString()}</span>
-              </div>
-            </td>
-            <td style="width: 4%;"></td>
-            <td style="width: 48%; vertical-align: top; padding-left: 15px;">
-              <strong style="color: #0f172a; font-size: 11pt;">${clientProfile.businessName.toUpperCase()}</strong><br/><br/><br/>
-              <div style="border-top: 1px solid #334155; padding-top: 5px;">
-                <strong>${clientProfile.contactName}, ${contractInputs.clientSignerTitle}</strong><br/>
-                <span style="color: #64748b; font-size: 9pt;">Date: ________________________</span>
-              </div>
-            </td>
-          </tr>
-        </table>
-      `;
-      html = html.replace(/AUTHORIZATION & SIGNATURES[\s\S]*/gim, 'AUTHORIZATION & SIGNATURES<br/>By signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.<br/>' + sigBlock);
-    }
-
-    html = html.replace(/(<li style=".*?">.*?<\/li>)/gim, '<ul style="margin-top: 6px; margin-bottom: 14px; padding-left: 22px;">$1</ul>');
-    html = html.replace(/<\/ul>\s*<ul style=".*?">/gim, '');
-
-    return `
-      <div style="font-family: Arial, sans-serif; font-size: 10.5pt; color: #1e293b; line-height: 1.6; max-width: 800px; margin: 0 auto;">
-        ${html}
-      </div>
-    `;
-  };
-
-  const openInGoogleDocs = async () => {
-    if (!generatedContent) return;
-    const htmlContent = convertToExecutiveHtml(generatedContent);
-
-    try {
-      const blobHtml = new Blob([htmlContent], { type: 'text/html' });
-      const blobText = new Blob([generatedContent], { type: 'text/plain' });
-      const item = new ClipboardItem({
-        'text/html': blobHtml,
-        'text/plain': blobText
-      });
-      await navigator.clipboard.write([item]);
-    } catch (e) {
-      await navigator.clipboard.writeText(generatedContent);
-    }
-
-    setDocsCopied(true);
-    setTimeout(() => setDocsCopied(false), 3000);
-    window.open('https://docs.new', '_blank');
-  };
-
-  const activePkg = PACKAGES.find(p => p.id === selectedPackageId) || PACKAGES[0];
-  const activeProbingQuestions = PROBING_QUESTIONS[selectedPackageId] || PROBING_QUESTIONS.contract;
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
+      
+      {/* --- APP CONSOLE VIEW (Hidden via CSS toggle to preserve state) --- */}
+      <div className={`${showConsole ? 'block' : 'hidden'} relative z-[100]`}>
+        <div className="bg-slate-900 text-slate-200 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs sticky top-0 z-[100]">
+          <span className="font-mono text-emerald-400 font-bold flex items-center gap-2">
+            <Sliders className="w-4 h-4" /> Rooted Solutions Consulting Tool (Admin View)
+          </span>
+          <button
+            onClick={() => setShowConsole(false)}
+            className="bg-slate-800 hover:bg-slate-700 text-slate-100 px-3 py-1 rounded-lg transition-colors font-sans font-semibold flex items-center gap-1.5"
+          >
+            ← Back to Public Website
+          </button>
+        </div>
+        <AppConsole />
+      </div>
 
-      {/* ========================================================= */}
-      {/* VIEW 1: PUBLIC LANDING PAGE                               */}
-      {/* ========================================================= */}
-      <div className={activeView === 'landing' ? 'block' : 'hidden'}>
+      {/* --- PUBLIC LANDING PAGE VIEW --- */}
+      <div className={`${showConsole ? 'hidden' : 'block'}`}>
+        
         {/* NAVIGATION BAR */}
         <nav className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 cursor-pointer select-none" onDoubleClick={() => setShowAdmin(true)} title="Rooted Solutions">
               <BrandLogo size="w-9 h-9" />
-              <span className="font-bold text-slate-100 text-lg tracking-tight">Rooted Solutions LLC</span>
+              <span className="font-bold text-slate-100 text-lg tracking-tight">Rooted Solutions</span>
             </div>
 
             <div className="hidden md:flex items-center gap-6 text-sm text-slate-300 font-medium">
@@ -792,15 +676,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
             </div>
 
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowAdmin(true)}
-                className="p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-800/60 rounded-xl transition-all text-xs flex items-center gap-1.5 border border-slate-800"
-                title="Admin Leads Vault"
-              >
-                <Database className="w-4 h-4 text-emerald-400" />
-                <span className="hidden sm:inline font-mono font-semibold">Leads ({savedLeads.length})</span>
-              </button>
-
               <a
                 href="#contact"
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20"
@@ -811,11 +686,17 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
           </div>
         </nav>
 
-        {/* HERO SECTION */}
+        {/* HERO SECTION WITH STRONGER BRANDING */}
         <section className="relative pt-20 pb-16 md:pt-28 md:pb-24 overflow-hidden border-b border-slate-800/60">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-500/5 blur-3xl pointer-events-none rounded-full" />
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+
+            <div className="flex flex-col items-center justify-center mb-4 space-y-4">
+               <BrandLogo size="w-20 h-20" />
+               <span className="text-emerald-400 font-mono text-sm tracking-[0.2em] font-bold uppercase bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full">Operational Partners</span>
+            </div>
+
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-100 max-w-4xl mx-auto leading-tight">
               Simple Operations & Local Marketing — <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">No Corporate Fluff.</span>
             </h1>
@@ -840,7 +721,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               </a>
             </div>
 
-            {/* TRUST BADGES */}
             <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto text-xs text-slate-400 font-medium">
               <div className="flex items-center justify-center gap-2 bg-slate-900/40 border border-slate-800/80 p-2.5 rounded-xl">
                 <Clock className="w-4 h-4 text-emerald-400" />
@@ -859,62 +739,11 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                 <span>Plain English Guarantee</span>
               </div>
             </div>
+
           </div>
         </section>
 
-        {/* PAIN VS SOLUTION */}
-        <section className="py-16 bg-slate-900/40 border-b border-slate-800/60">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-100">Why Work With Rooted Solutions?</h2>
-              <p className="text-slate-400 text-sm mt-2">We replace complex software subscriptions and high consulting retainers with simple, clean business tools.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="bg-slate-950/80 border border-red-500/20 rounded-2xl p-6 space-y-4">
-                <h3 className="text-base font-bold text-red-400 flex items-center gap-2">
-                  ❌ The Usual Frustrations
-                </h3>
-                <ul className="space-y-3 text-xs text-slate-400">
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-400 font-bold">•</span>
-                    Consultants using confusing buzzwords (COGS, EBIT, MSA, Diagnostic).
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-400 font-bold">•</span>
-                    Expensive software subscriptions ($100-$300/mo) you barely use.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-red-400 font-bold">•</span>
-                    Spending 10-15 hours a week doing quotes and paper receipts after work.
-                  </li>
-                </ul>
-              </div>
-
-              <div className="bg-slate-950/80 border border-emerald-500/30 rounded-2xl p-6 space-y-4">
-                <h3 className="text-base font-bold text-emerald-400 flex items-center gap-2">
-                  ✅ The Rooted Solutions Way
-                </h3>
-                <ul className="space-y-3 text-xs text-slate-300">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    Plain-English agreements and trackers you actually understand.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    One-time transparent pricing — no monthly subscription fees.
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    10-day turnaround so you can get back to running your business.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SERVICES MENU SECTION */}
+        {/* SERVICES SECTION */}
         <section id="services" className="py-20 border-b border-slate-800/60">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
@@ -926,13 +755,10 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {PACKAGES.slice(0, 4).map((service) => {
+              {PACKAGES.filter(p => p.price === 200).slice(0, 4).map((service, idx) => {
                 const Icon = service.icon;
                 return (
-                  <div
-                    key={service.id}
-                    className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all"
-                  >
+                  <div key={idx} className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-slate-700 transition-all">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="p-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-xl text-emerald-400">
@@ -940,12 +766,10 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                         </div>
                         <span className="text-xl font-mono font-bold text-emerald-400">${service.price}</span>
                       </div>
-
                       <div>
                         <h3 className="text-base font-bold text-slate-100">{service.title}</h3>
                         <p className="text-xs text-slate-400 mt-2 leading-relaxed">{service.description}</p>
                       </div>
-
                       <div className="pt-3 border-t border-slate-800/60 space-y-2">
                         {service.deliverables.map((item, dIdx) => (
                           <div key={dIdx} className="flex items-center gap-2 text-xs text-slate-300">
@@ -955,11 +779,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                         ))}
                       </div>
                     </div>
-
-                    <a
-                      href="#contact"
-                      className="mt-6 w-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold py-2.5 rounded-xl text-center block transition-colors"
-                    >
+                    <a href="#contact" className="mt-6 w-full bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold py-2.5 rounded-xl text-center block transition-colors">
                       Select Service
                     </a>
                   </div>
@@ -982,10 +802,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
               <div className="text-center md:text-right shrink-0">
                 <div className="text-3xl font-mono font-extrabold text-emerald-400">$600</div>
                 <span className="text-[11px] text-slate-400 font-mono block">Saves $200 overall</span>
-                <a
-                  href="#contact"
-                  className="mt-3 inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all"
-                >
+                <a href="#contact" className="mt-3 inline-block bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all">
                   Get Started
                 </a>
               </div>
@@ -993,52 +810,38 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
           </div>
         </section>
 
-        {/* HOW IT WORKS PROCESS */}
+        {/* HOW IT WORKS */}
         <section id="process" className="py-20 border-b border-slate-800/60 bg-slate-900/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-2">
               <h2 className="text-3xl font-extrabold text-slate-100">Our 3-Step Simple Process</h2>
               <p className="text-slate-400 text-sm">No lengthy forms or complex onboardings.</p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 relative">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">
-                  1
-                </div>
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">1</div>
                 <h3 className="text-base font-bold text-slate-100 mb-2">15-Minute Intake Chat</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  We talk through your business over the phone or a quick voice note. We gather the key details without filling out hours of paperwork.
-                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">We talk through your business over the phone or a quick voice note. We gather the key details without filling out hours of paperwork.</p>
               </div>
-
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 relative">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">
-                  2
-                </div>
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">2</div>
                 <h3 className="text-base font-bold text-slate-100 mb-2">48-Hour Asset Build</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  We build your custom agreements, Google Sheet profit trackers, and crew checklists formatted directly for your business.
-                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">We build your custom agreements, Google Sheet profit trackers, and crew checklists formatted directly for your business.</p>
               </div>
-
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 relative">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">
-                  3
-                </div>
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-bold flex items-center justify-center text-sm mb-4">3</div>
                 <h3 className="text-base font-bold text-slate-100 mb-2">Walkthrough & Hand-off</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  We review everything together, make any requested tweaks, and hand over ready-to-use Google Docs, Sheets, and PDFs.
-                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">We review everything together, make any requested tweaks, and hand over ready-to-use Google Docs, Sheets, and PDFs.</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* LEAD INTAKE FORM */}
+        {/* LEAD INTAKE FORM (With Error State Implementation) */}
         <section id="contact" className="py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6">
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 space-y-6 shadow-2xl">
+              
               <div className="text-center space-y-2">
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-100">Book Your Free 15-Minute Chat</h2>
                 <p className="text-slate-400 text-xs">Let us know what you need help with and we will follow up within 24 hours.</p>
@@ -1048,22 +851,24 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
                   <h3 className="text-lg font-bold text-slate-100">Thank You!</h3>
-                  <p className="text-xs text-slate-400">Your information was received and stored. We will reach out shortly to schedule your quick 15-minute intake call.</p>
-                  {submitError && (
-                    <div className="text-[11px] text-amber-400 flex items-center justify-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {submitError}
-                    </div>
+                  <p className="text-xs text-slate-400">Your information was received. We will reach out shortly to schedule your quick 15-minute intake call.</p>
+                  
+                  {formError && (
+                     <div className="mt-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg text-amber-400 text-[11px] flex items-center justify-center gap-2">
+                        <Lightbulb className="w-4 h-4 shrink-0" />
+                        {formError}
+                     </div>
                   )}
+
                   <button
-                    onClick={() => setSubmitted(false)}
+                    onClick={() => { setSubmitted(false); setFormError(''); }}
                     className="text-xs font-semibold text-emerald-400 underline hover:text-emerald-300 pt-2"
                   >
                     Submit Another Inquiry
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleLeadSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-medium text-slate-400 mb-1 block">Your Name</label>
@@ -1076,7 +881,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
-
                     <div>
                       <label className="text-xs font-medium text-slate-400 mb-1 block">Business Name</label>
                       <input
@@ -1102,7 +906,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
                       />
                     </div>
-
                     <div>
                       <label className="text-xs font-medium text-slate-400 mb-1 block">Email Address</label>
                       <input
@@ -1151,14 +954,24 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                   </button>
                 </form>
               )}
+
             </div>
           </div>
         </section>
+
+        {/* FOOTER */}
+        <footer className="border-t border-slate-800/80 bg-slate-900/60 py-8">
+          <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>© {new Date().getFullYear()} Rooted Solutions. All rights reserved.</p>
+            <p>Commerce City & Denver Metro Area, Colorado • Plain-English Business Consulting</p>
+          </div>
+        </footer>
 
         {/* ADMIN LEADS MODAL */}
         {showAdmin && (
           <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+              
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
@@ -1183,9 +996,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                   <Lock className="w-10 h-10 text-emerald-400 mx-auto" />
                   <div>
                     <h4 className="text-base font-bold text-slate-100">Admin Passcode Required</h4>
-                    <p className="text-xs text-slate-400 mt-1">Enter your admin passcode to access your client leads</p>
                   </div>
-
                   <input
                     type="password"
                     value={adminPin}
@@ -1193,7 +1004,6 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                     placeholder="Enter passcode..."
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-center text-slate-100 focus:outline-none focus:border-emerald-500/50 font-mono"
                   />
-
                   <button
                     type="submit"
                     className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all"
@@ -1203,15 +1013,13 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                 </form>
               ) : (
                 <div className="flex-1 flex flex-col min-h-0 space-y-4">
+                  
                   <div className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
                     <span className="text-slate-400 font-mono">Total Saved Leads: <strong className="text-emerald-400">{savedLeads.length}</strong></span>
                     
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => {
-                          setShowAdmin(false);
-                          setActiveView('console');
-                        }}
+                        onClick={() => { setShowConsole(true); setShowAdmin(false); }}
                         className="px-3 py-1.5 bg-emerald-500 text-slate-950 font-bold rounded-lg flex items-center gap-1.5 hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20"
                       >
                         <Sliders className="w-3.5 h-3.5" />
@@ -1233,11 +1041,11 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                       <div className="text-center py-12 text-slate-500 space-y-2">
                         <UserCheck className="w-8 h-8 mx-auto text-slate-600" />
                         <p className="text-xs font-medium">No leads submitted yet.</p>
-                        <p className="text-[11px] text-slate-600">Test the lead form on your landing page to see submissions appear here!</p>
                       </div>
                     ) : (
                       savedLeads.map((lead) => (
                         <div key={lead.id} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 relative group">
+                          
                           <div className="flex items-start justify-between gap-4 border-b border-slate-800/60 pb-3">
                             <div>
                               <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold">
@@ -1252,31 +1060,11 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
                               <button
                                 onClick={() => deleteLead(lead.id)}
                                 className="text-slate-500 hover:text-red-400 p-1 rounded-md transition-colors"
-                                title="Delete Lead"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-                              <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                              <a href={`tel:${lead.phone}`} className="hover:text-emerald-400 font-mono">{lead.phone}</a>
-                            </div>
-
-                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-                              <Mail className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                              <a href={`mailto:${lead.email}`} className="hover:text-teal-400 truncate">{lead.email}</a>
-                            </div>
-                          </div>
-
-                          {lead.notes && (
-                            <div className="bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400">
-                              <span className="font-semibold text-slate-300 block mb-1">Operational Headache Notes:</span>
-                              <p className="leading-relaxed">{lead.notes}</p>
-                            </div>
-                          )}
                         </div>
                       ))
                     )}
@@ -1286,475 +1074,7 @@ ${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
             </div>
           </div>
         )}
-
-        {/* FOOTER */}
-        <footer className="border-t border-slate-800/80 bg-slate-900/60 py-8">
-          <div className="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
-            <p>© {new Date().getFullYear()} Rooted Solutions LLC. All rights reserved.</p>
-            <p>Commerce City & Denver Metro Area, Colorado • Plain-English Business Operations</p>
-          </div>
-        </footer>
       </div>
-
-      {/* ========================================================= */}
-      {/* VIEW 2: OPERATIONS ENGINE (ADMIN CONSOLE)                 */}
-      {/* ========================================================= */}
-      <div className={activeView === 'console' ? 'block' : 'hidden'}>
-        {/* CONSOLE TOP BAR */}
-        <div className="bg-slate-900 text-slate-200 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs sticky top-0 z-[100]">
-          <span className="font-mono text-emerald-400 font-bold flex items-center gap-2">
-            <Sliders className="w-4 h-4" /> Rooted Solutions Consulting Tool (Admin View)
-          </span>
-          <button
-            onClick={() => setActiveView('landing')}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-100 px-3 py-1 rounded-lg transition-colors font-sans font-semibold"
-          >
-            ← Back to Public Website
-          </button>
-        </div>
-
-        {/* CONSOLE HEADER */}
-        <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 py-4">
-          <div className="max-w-[1700px] mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <BrandLogo size="w-10 h-10" />
-              <div>
-                <h1 className="text-lg font-bold text-slate-100 tracking-tight">Rooted Solutions Consulting Tool</h1>
-                <p className="text-xs text-slate-400">Client Intake & Operations Engine</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl font-mono">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              System Active
-            </div>
-          </div>
-        </header>
-
-        {/* 2-ROW DELIVERABLE TILES */}
-        <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-4">
-          <div className="max-w-[1700px] mx-auto space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-emerald-400" />
-                Service Deliverable Menu
-              </span>
-              <span className="text-[11px] text-slate-500">Select a deliverable to configure</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {PACKAGES.map((pkg) => {
-                const Icon = pkg.icon;
-                const isSelected = selectedPackageId === pkg.id;
-                return (
-                  <button
-                    key={pkg.id}
-                    onClick={() => setSelectedPackageId(pkg.id)}
-                    className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
-                      isSelected
-                        ? 'bg-emerald-500/15 border-emerald-500/60 text-slate-100 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/30'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:bg-slate-900/60'
-                    }`}
-                  >
-                    <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-bold truncate text-slate-200">{pkg.title}</span>
-                        <span className="text-[10px] font-mono text-emerald-400 font-bold shrink-0">${pkg.price}</span>
-                      </div>
-                      <p className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{pkg.description}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* WORKSPACE CONTENT */}
-        <main className="max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT COLUMN: INTAKE CONTROLS */}
-          <section className="lg:col-span-5 space-y-6">
-            {/* ACTIVE PACKAGE CARD */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 relative overflow-hidden backdrop-blur-sm">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <span className="text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold">
-                    {activePkg.tag}
-                  </span>
-                  <h2 className="text-xl font-bold text-slate-100 mt-2">{activePkg.title}</h2>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{activePkg.description}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-2xl font-extrabold text-emerald-400 font-mono">${activePkg.price}</span>
-                  <span className="text-[10px] block text-slate-500">Rooted Solutions</span>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-800/60 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                {activePkg.deliverables.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-1.5 text-[11px] text-slate-300">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                    <span className="truncate">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* CLIENT PROFILE BLOCK */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
-                <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                  <Building className="w-4 h-4 text-emerald-400" />
-                  Client Profile
-                </h3>
-                <span className="text-[10px] text-slate-500 font-mono">General Info</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Business Name</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={clientProfile.businessName}
-                      onChange={(e) => setClientProfile({ ...clientProfile, businessName: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <Building className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Primary Contact</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={clientProfile.contactName}
-                      onChange={(e) => setClientProfile({ ...clientProfile, contactName: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <User className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Email</label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={clientProfile.email}
-                      onChange={(e) => setClientProfile({ ...clientProfile, email: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <Mail className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-medium text-slate-400 mb-1 block">Location / City</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={clientProfile.location}
-                      onChange={(e) => setClientProfile({ ...clientProfile, location: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                    <MapPin className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* DELIVERABLE INPUTS */}
-            <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
-                <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-emerald-400" />
-                  Deliverable Inputs
-                </h3>
-
-                <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-                  <button
-                    onClick={() => setInputTab('form')}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                      inputTab === 'form' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Form
-                  </button>
-                  <button
-                    onClick={() => setInputTab('voice')}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                      inputTab === 'voice' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Voice
-                  </button>
-                  <button
-                    onClick={() => setInputTab('transcript')}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
-                      inputTab === 'transcript' ? 'bg-emerald-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Transcript
-                  </button>
-                </div>
-              </div>
-
-              {/* VOICE RECORDING TAB */}
-              {inputTab === 'voice' && (
-                <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-4 text-center">
-                  <div className="flex flex-col items-center justify-center py-4">
-                    <button
-                      onClick={toggleRecording}
-                      className={`p-5 rounded-full transition-all ${
-                        isRecording
-                          ? 'bg-red-500/20 text-red-400 border-2 border-red-500 animate-pulse'
-                          : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:scale-105'
-                      }`}
-                    >
-                      {isRecording ? <Square className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-                    </button>
-                    <span className="text-xs font-mono text-slate-400 mt-3">
-                      {isRecording ? `Recording Live... ${recordingTime}s` : 'Tap to Record Voice Notes'}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Record key terms verbally to include in the generated document.
-                  </p>
-                </div>
-              )}
-
-              {/* TRANSCRIPT TAB */}
-              {inputTab === 'transcript' && (
-                <div className="space-y-2">
-                  <label className="text-[11px] font-medium text-slate-400 block">Paste Call Notes / Meeting Transcript</label>
-                  <textarea
-                    rows={6}
-                    value={transcriptText}
-                    onChange={(e) => setTranscriptText(e.target.value)}
-                    placeholder="Paste unstructured raw intake notes here..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500/50 font-mono"
-                  />
-                </div>
-              )}
-
-              {/* FORM TAB */}
-              {inputTab === 'form' && selectedPackageId === 'contract' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-[11px] font-medium text-emerald-400 mb-2 block flex items-center gap-1">
-                      <FileCheck2 className="w-3.5 h-3.5" />
-                      Services Included in This Contract:
-                    </label>
-                    <div className="space-y-1.5 bg-slate-950 border border-slate-800 p-3 rounded-xl max-h-48 overflow-y-auto">
-                      {CONTRACT_SERVICE_OPTIONS.map((opt) => {
-                        const isChecked = contractInputs.selectedServices.includes(opt.id);
-                        return (
-                          <div
-                            key={opt.id}
-                            onClick={() => toggleContractService(opt.id)}
-                            className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-xs transition-colors ${
-                              isChecked ? 'bg-emerald-500/10 text-slate-200 border border-emerald-500/30' : 'text-slate-400 hover:bg-slate-900'
-                            }`}
-                          >
-                            {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-                            ) : (
-                              <SquareIcon className="w-4 h-4 text-slate-600 shrink-0" />
-                            )}
-                            <span className="truncate font-medium">{opt.name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Contact Title</label>
-                      <input
-                        type="text"
-                        value={contractInputs.clientSignerTitle}
-                        onChange={(e) => setContractInputs({ ...contractInputs, clientSignerTitle: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-medium text-slate-400 mb-1 block">Total Contract Price ($)</label>
-                      <input
-                        type="number"
-                        value={contractInputs.totalContractValue}
-                        onChange={(e) => setContractInputs({ ...contractInputs, totalContractValue: Number(e.target.value) })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-medium text-slate-400 mb-1 block">Payment Terms & Upfront Deposit</label>
-                    <input
-                      type="text"
-                      value={contractInputs.paymentTerms}
-                      onChange={(e) => setContractInputs({ ...contractInputs, paymentTerms: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* DYNAMIC PROBING QUESTIONS */}
-              <div className="bg-slate-950/80 border border-emerald-500/20 rounded-xl p-3.5 space-y-2.5">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Lightbulb className="w-3.5 h-3.5" />
-                    Key Discovery Probing Questions:
-                  </span>
-                  <span className="text-[9px] font-mono text-slate-500">Ask Client Before Notes</span>
-                </div>
-
-                <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
-                  {activeProbingQuestions.map((pq, idx) => (
-                    <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-2.5 text-xs space-y-0.5">
-                      <span className="font-semibold text-slate-200 block text-[11px]">{pq.question}</span>
-                      <p className="text-[10.5px] text-slate-400 leading-snug">{pq.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* GENERAL DISCOVERY NOTES */}
-              <div>
-                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Terms & Discovery Notes</label>
-                <textarea
-                  rows={3}
-                  value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
-                  onChange={(e) => {
-                    if (selectedPackageId === 'contract') {
-                      setContractInputs({ ...contractInputs, specialTerms: e.target.value });
-                    } else {
-                      setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
-                    }
-                  }}
-                  placeholder="Record discovery answers, client payment systems, special conditions..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-                />
-              </div>
-
-              {/* GENERATE BUTTON */}
-              <button
-                onClick={generateDocument}
-                disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
-              >
-                {isGenerating ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    Formatting Executive Deliverable...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    Generate {activePkg.title}
-                  </>
-                )}
-              </button>
-            </div>
-          </section>
-
-          {/* RIGHT COLUMN: PREVIEW CANVAS */}
-          <section className="lg:col-span-7 space-y-6 flex flex-col">
-            {selectedPackageId === 'financial' && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                  <span className="text-[10px] text-slate-400 font-medium block">Total Monthly Sales</span>
-                  <span className="text-base font-bold text-slate-100 font-mono">${finCalculations.grossRev.toLocaleString()}</span>
-                </div>
-                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                  <span className="text-[10px] text-slate-400 font-medium block">Money You Keep</span>
-                  <span className="text-base font-bold text-emerald-400 font-mono">${finCalculations.netTakeHome.toLocaleString()}</span>
-                </div>
-                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                  <span className="text-[10px] text-slate-400 font-medium block">Profit Margin %</span>
-                  <span className="text-base font-bold text-teal-300 font-mono">{finCalculations.marginPct}%</span>
-                </div>
-                <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3">
-                  <span className="text-[10px] text-slate-400 font-medium block">Minimum Sales Goal</span>
-                  <span className="text-base font-bold text-amber-400 font-mono">${finCalculations.breakEvenMonthlyRev.toLocaleString()}</span>
-                </div>
-              </div>
-            )}
-
-            <div className="flex-1 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-sm min-h-[550px]">
-              <div className="bg-slate-950/80 px-4 py-3 border-b border-slate-800/80 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <FileCode className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-semibold text-slate-200">
-                    {activePkg.title} Deliverable Document
-                  </span>
-                  {executionTime && (
-                    <span className="text-[10px] font-mono text-slate-500 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
-                      Generated in {executionTime}s
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={openInGoogleDocs}
-                    disabled={!generatedContent}
-                    className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm shadow-emerald-500/10 disabled:opacity-40"
-                  >
-                    {docsCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <ExternalLink className="w-3.5 h-3.5" />}
-                    {docsCopied ? 'Formatted & Copied!' : 'Open in Google Docs'}
-                  </button>
-
-                  <button
-                    onClick={copyToClipboard}
-                    disabled={!generatedContent}
-                    className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40"
-                  >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-1 p-5 overflow-y-auto font-mono text-xs text-slate-300 leading-relaxed space-y-4">
-                {isGenerating ? (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3 py-20">
-                    <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
-                    <p className="text-xs">Structuring executive deliverable...</p>
-                  </div>
-                ) : generatedContent ? (
-                  <pre className="whitespace-pre-wrap font-mono text-slate-200 selection:bg-emerald-500 selection:text-slate-950">
-                    {generatedContent}
-                  </pre>
-                ) : (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-3 py-20">
-                    <Sparkles className="w-10 h-10 text-slate-700" />
-                    <div className="text-center">
-                      <p className="text-xs font-semibold text-slate-400">Workspace Ready</p>
-                      <p className="text-[11px] text-slate-600 mt-1 max-w-sm">
-                        Select a deliverable from the top menu, configure options on the left, and click Generate.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-slate-950/80 px-4 py-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-                <span>Status: {generatedContent ? 'Render Complete' : 'Ready'}</span>
-                <span>Rooted Solutions LLC</span>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-
     </div>
   );
 }
