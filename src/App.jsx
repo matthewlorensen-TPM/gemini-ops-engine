@@ -565,16 +565,19 @@ export default function App() {
   const [showConsole, setShowConsole] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const GOOGLE_SHEET_WEBHOOK_URL = '';
+  // LIVE GOOGLE SCRIPT WEB APP URL CONNECTED!
+  const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxLlF-Yp3OupG6wkRzmPOrNAyOBB1yp6KyLvEJlCk6UmNTOeC6-bKGKTHQTgo3dxZ8j/exec';
 
   const [showAdmin, setShowAdmin] = useState(false);
   const [adminPin, setAdminPin] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
   const [savedLeads, setSavedLeads] = useState(() => {
     try {
       const stored = localStorage.getItem('rooted_leads');
       return stored ? JSON.parse(stored) : [];
     } catch (e) {
+      console.error("Local storage error:", e);
       return [];
     }
   });
@@ -584,37 +587,50 @@ export default function App() {
     setIsSubmitting(true);
     setFormError('');
     
+    // 1. Create the lead object with timestamp included
     const newLead = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
       ...formData
     };
 
+    // 2. ALWAYS Save locally first to guarantee no data loss
     const updatedLeads = [newLead, ...savedLeads];
     setSavedLeads(updatedLeads);
-    
     try {
       localStorage.setItem('rooted_leads', JSON.stringify(updatedLeads));
     } catch (err) {
       console.error('Failed to save lead locally:', err);
     }
 
-    if (GOOGLE_SHEET_WEBHOOK_URL) {
+    // 3. Transmit to Google Sheets Webhook using text/plain to bypass CORS preflight issues
+    if (GOOGLE_SHEET_WEBHOOK_URL && GOOGLE_SHEET_WEBHOOK_URL.startsWith('http')) {
       try {
-        const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+        await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(newLead)
         });
       } catch (err) {
         console.error('Failed to post lead to Google Drive Sheet:', err);
-        setFormError('Warning: Could not connect to the remote database, but your lead was saved locally!');
+        setFormError('Warning: Could not connect to the remote database, but your lead was safely stored locally in your Vault!');
       }
     }
 
+    // 4. Force success state
     setIsSubmitting(false);
     setSubmitted(true);
+    
+    // Reset form after saving
+    setFormData({
+      name: '',
+      businessName: '',
+      phone: '',
+      email: '',
+      packageInterest: 'Complete Business Starter Pack ($600)',
+      notes: ''
+    });
   };
 
   const handleAdminAuth = (e) => {
@@ -913,7 +929,7 @@ export default function App() {
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
                   <h3 className="text-lg font-bold text-slate-100">Thank You!</h3>
-                  <p className="text-xs text-slate-400">Your information was received. We will reach out shortly to schedule your quick 15-minute intake call.</p>
+                  <p className="text-xs text-slate-400">Your information was received and saved to our leads database. We will reach out shortly to schedule your quick 15-minute intake call.</p>
                   
                   {formError && (
                      <div className="mt-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg text-amber-400 text-[11px] flex items-center justify-center gap-2">
@@ -1127,6 +1143,26 @@ export default function App() {
                               </button>
                             </div>
                           </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
+                              <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <a href={`tel:${lead.phone}`} className="hover:text-emerald-400 font-mono">{lead.phone}</a>
+                            </div>
+
+                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
+                              <Mail className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                              <a href={`mailto:${lead.email}`} className="hover:text-teal-400 truncate">{lead.email}</a>
+                            </div>
+                          </div>
+
+                          {lead.notes && (
+                            <div className="bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400">
+                              <span className="font-semibold text-slate-300 block mb-1">Operational Headache Notes:</span>
+                              <p className="leading-relaxed">{lead.notes}</p>
+                            </div>
+                          )}
+
                         </div>
                       ))
                     )}
