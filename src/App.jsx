@@ -1,31 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
-  ShieldCheck,
   DollarSign,
+  ShieldCheck,
   FileText,
-  Target,
-  CheckCircle2,
-  ArrowRight,
-  Clock,
-  Building,
-  Phone,
-  Mail,
+  Layers,
+  Mic,
+  Square,
+  Upload,
+  Play,
+  Copy,
   Check,
-  Sparkles,
-  Award,
-  Zap,
-  Database,
-  Lock,
   Download,
-  Trash2,
+  RefreshCw,
+  Sparkles,
+  Cpu,
+  Building,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  Lock,
+  ArrowUpRight,
+  Calculator,
+  Volume2,
+  Palette,
+  Target,
+  Briefcase,
+  Compass,
+  FileCode,
+  Sliders,
+  Database,
   X,
   UserCheck,
-  Sliders,
-  Layers,
-  Copy,
-  RefreshCw,
-  ExternalLink,
-  Lightbulb
+  Trash2,
+  ArrowRight,
+  Clock,
+  Award,
+  Zap,
+  Lightbulb,
+  ExternalLink
 } from 'lucide-react';
 
 // ==========================================
@@ -69,7 +86,7 @@ const PACKAGES = [
     title: 'Business Name, Logo & Pitch',
     price: 200,
     tag: 'Brand Ideas',
-    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>,
+    icon: Palette,
     color: 'purple',
     description: 'Clear business tagline, color style guide, quick elevator pitch, and logo design ideas for your local business.',
     deliverables: ['Business Tagline & Message', 'Color & Logo Directives', 'Quick Sales Pitches']
@@ -89,7 +106,7 @@ const PACKAGES = [
     title: 'Simple Business & Loan Plan',
     price: 350,
     tag: 'Business Plan',
-    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
+    icon: Briefcase,
     color: 'indigo',
     description: 'Straight-to-the-point business plan designed for bank loan officers, partners, or setting your business goals.',
     deliverables: ['Bank & SBA Loan Narrative', 'Local Competition Overview', 'Simple Financial Strategy']
@@ -99,7 +116,7 @@ const PACKAGES = [
     title: 'Time-Saver & Tech Audit',
     price: 200,
     tag: 'Time Saver',
-    icon: ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>,
+    icon: Compass,
     color: 'blue',
     description: 'Find out where you are losing hours every week and get a simple list of easy software or apps to fix it.',
     deliverables: ['Software & App Checkup', 'Weekly Hours Lost Review', 'Easy Step-by-Step Plan']
@@ -168,7 +185,7 @@ const PROBING_QUESTIONS = {
   ]
 };
 
-// SVG Fallback for Document Icon to prevent Lucide version conflicts
+// SVG Fallback Icons for Document Generation Area
 const DocumentIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
 const CodeIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
 
@@ -311,7 +328,7 @@ function AppConsole() {
         </div>
       </header>
 
-      {/* CLIENT PROFILE (TOP BAR) - MOVED FROM GRID */}
+      {/* CLIENT PROFILE (TOP BAR) */}
       <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-4">
         <div className="max-w-[1700px] mx-auto space-y-4">
           <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
@@ -395,7 +412,7 @@ function AppConsole() {
         {/* ROW 1: MENU & PROBING QUESTIONS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* SERVICE DELIVERABLE MENU (MOVED TO GRID) */}
+          {/* SERVICE DELIVERABLE MENU */}
           <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4 h-full flex flex-col shadow-inner">
             <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
               <span className="text-sm font-semibold text-slate-200 flex items-center gap-2">
@@ -534,7 +551,7 @@ function AppConsole() {
 // ==========================================
 // MAIN EXPORT (LANDING PAGE + APP CONSOLE)
 // ==========================================
-export default function LandingPage() {
+export default function App() {
   const [formData, setFormData] = useState({
     name: '',
     businessName: '',
@@ -670,6 +687,7 @@ export default function LandingPage() {
             </div>
 
             <div className="hidden md:flex items-center gap-6 text-sm text-slate-300 font-medium">
+              <a href="#about" className="hover:text-emerald-400 transition-colors">About</a>
               <a href="#services" className="hover:text-emerald-400 transition-colors">Services</a>
               <a href="#process" className="hover:text-emerald-400 transition-colors">How It Works</a>
               <a href="#contact" className="hover:text-emerald-400 transition-colors">Contact</a>
@@ -740,6 +758,50 @@ export default function LandingPage() {
               </div>
             </div>
 
+          </div>
+        </section>
+
+        {/* ABOUT & MISSION SECTION */}
+        <section id="about" className="py-20 border-b border-slate-800/60 bg-slate-900/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              
+              <div className="space-y-6">
+                <span className="text-xs font-mono uppercase text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                  About the Founder
+                </span>
+                <h2 className="text-3xl font-extrabold text-slate-100">Real Experience.<br/>Local Roots.</h2>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  With over 25 years of hands-on experience spanning manufacturing, customer service, retail, food service, and IT (both scrappy start-ups and global enterprises), I’ve seen firsthand what makes a business run smoothly—and what just wastes your time and money.
+                </p>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  As an active volunteer and proud resident of the Commerce City area, I built Rooted Solutions to bring enterprise-level efficiency to the local mom-and-pop shops that form the backbone of our community. 
+                </p>
+                
+                <div className="bg-slate-950/50 border border-emerald-500/30 rounded-xl p-5 mt-4 border-l-4 border-l-emerald-500">
+                  <h3 className="text-emerald-400 font-bold text-sm mb-2">Our Mission</h3>
+                  <p className="text-slate-300 text-sm italic">
+                    "To empower local business owners with honest, transparent, and practical operational tools that save time and increase profit—without the corporate fluff."
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 flex flex-col items-center justify-center">
+                    <div className="text-4xl font-black text-emerald-400 font-mono">25+</div>
+                    <div className="text-xs text-slate-400 font-medium">Years of Operations Experience</div>
+                </div>
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 flex flex-col items-center justify-center">
+                    <div className="text-4xl font-black text-teal-400 font-mono">5</div>
+                    <div className="text-xs text-slate-400 font-medium">Core Industries Mastered</div>
+                </div>
+                <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 col-span-2 flex flex-col items-center justify-center">
+                    <div className="text-xl font-bold text-slate-200">Commerce City, CO</div>
+                    <div className="text-xs text-slate-400 font-medium">Proudly Local, Transparent & Community Driven</div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </section>
 
@@ -837,7 +899,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* LEAD INTAKE FORM (With Error State Implementation) */}
+        {/* LEAD INTAKE FORM */}
         <section id="contact" className="py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6">
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 space-y-6 shadow-2xl">
