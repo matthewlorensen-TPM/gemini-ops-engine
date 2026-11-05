@@ -790,7 +790,7 @@ export default function App() {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
-          body: formParams
+          body: formParams.toString()
         });
       } catch (err) {
         console.error('Failed to post lead to Google Drive Sheet:', err);
