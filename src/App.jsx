@@ -773,6 +773,7 @@ export default function App() {
       console.error('Failed to save lead locally:', err);
     }
 
+    // Send to Google Drive Sheet if webhook URL is configured
     if (GOOGLE_SHEET_WEBHOOK_URL) {
       try {
         const formParams = new URLSearchParams();
@@ -795,8 +796,6 @@ export default function App() {
       } catch (err) {
         console.error('Failed to post lead to Google Drive Sheet:', err);
         setSubmitError(true);
-        setIsSubmitting(false);
-        return; 
       }
     }
 
