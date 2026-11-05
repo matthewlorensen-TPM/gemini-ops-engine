@@ -722,20 +722,10 @@ export default function App() {
   const [submitError, setSubmitError] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
 
-  // Shared Console CRM State
-  const [clientProfile, setClientProfile] = useState({
-    businessName: 'Apex Plumbing & HVAC',
-    contactName: 'John Smith',
-    email: 'john@apexplumbingco.com',
-    phone: '(303) 555-0192',
-    address: '1420 E 104th Ave, Thornton CO',
-    website: 'www.apexplumbingco.com',
-    socialMedia: 'FB/IG: @apexplumbingco'
-  });
-
-  // LIVE GOOGLE SCRIPT WEB APP URL
+  // Paste your Apps Script Web App URL below to send leads directly to your Google Drive Sheet!
   const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwrUtjKOIwOiqIlltVCV3ZQDRPamC9m05_yhTS50M45Mb-r6QAD1ha42gUGKGkht9oN/exec';
 
+  // Admin Leads Drawer State
   const [showAdmin, setShowAdmin] = useState(false);
   const [adminPin, setAdminPin] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -749,24 +739,29 @@ export default function App() {
     }
   });
 
+  const [clientProfile, setClientProfile] = useState({
+    businessName: 'Apex Plumbing & HVAC',
+    contactName: 'John Smith',
+    email: 'john@apexplumbingco.com',
+    phone: '(303) 555-0192',
+    address: 'Commerce City, CO'
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(false);
     
+    // Create new lead entry with timestamp & unique ID
     const newLead = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
-      name: formData.name,
-      businessName: formData.businessName,
-      phone: formData.phone,
-      email: formData.email,
-      packageInterest: formData.packageInterest,
-      notes: formData.notes
+      ...formData
     };
 
     const updatedLeads = [newLead, ...savedLeads];
     setSavedLeads(updatedLeads);
+    
     try {
       localStorage.setItem('rooted_leads', JSON.stringify(updatedLeads));
     } catch (err) {
@@ -778,19 +773,17 @@ export default function App() {
       try {
         const formParams = new URLSearchParams();
         formParams.append('date', newLead.date);
-        formParams.append('name', newLead.name);
-        formParams.append('businessName', newLead.businessName);
-        formParams.append('phone', newLead.phone);
-        formParams.append('email', newLead.email);
-        formParams.append('packageInterest', newLead.packageInterest);
-        formParams.append('notes', newLead.notes);
+        formParams.append('name', newLead.name || '');
+        formParams.append('businessName', newLead.businessName || '');
+        formParams.append('phone', newLead.phone || '');
+        formParams.append('email', newLead.email || '');
+        formParams.append('packageInterest', newLead.packageInterest || '');
+        formParams.append('notes', newLead.notes || '');
 
         await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formParams.toString()
         });
       } catch (err) {
@@ -801,27 +794,6 @@ export default function App() {
 
     setIsSubmitting(false);
     setSubmitted(true);
-    
-    setFormData({
-      name: '',
-      businessName: '',
-      phone: '',
-      email: '',
-      packageInterest: 'Complete Business Starter Pack ($600)',
-      notes: ''
-    });
-  };
-
-  const loadLeadIntoConsole = (lead) => {
-    setClientProfile(prev => ({
-      ...prev,
-      businessName: lead.businessName || prev.businessName,
-      contactName: lead.name || prev.contactName,
-      email: lead.email || prev.email,
-      phone: lead.phone || prev.phone
-    }));
-    setShowAdmin(false);
-    setShowConsole(true);
   };
 
   const handleAdminAuth = (e) => {
@@ -861,6 +833,18 @@ export default function App() {
     const filtered = savedLeads.filter(l => l.id !== id);
     setSavedLeads(filtered);
     localStorage.setItem('rooted_leads', JSON.stringify(filtered));
+  };
+
+  const loadLeadIntoConsole = (lead) => {
+    setClientProfile({
+      businessName: lead.businessName || 'Client Business',
+      contactName: lead.name || 'Owner',
+      email: lead.email || '',
+      phone: lead.phone || '',
+      address: 'Commerce City, CO'
+    });
+    setShowAdmin(false);
+    setShowConsole(true);
   };
 
   return (
@@ -1178,7 +1162,7 @@ export default function App() {
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
                   <h3 className="text-lg font-bold text-slate-100">Thank You!</h3>
-                  <p className="text-xs text-slate-400">Your information was received and saved. We will reach out shortly to schedule your quick 15-minute intake call.</p>
+                  <p className="text-xs text-slate-400">Your information was received and saved to your Google Sheet! We will reach out shortly.</p>
                   
                   <button
                     onClick={() => setSubmitted(false)}
