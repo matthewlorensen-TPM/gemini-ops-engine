@@ -1,55 +1,75 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState } from 'react';
 import {
-  DollarSign,
   ShieldCheck,
+  DollarSign,
   FileText,
+  Target,
+  CheckCircle2,
+  ArrowRight,
+  Clock,
+  Building,
+  Phone,
+  Mail,
+  Check,
+  Sparkles,
+  Award,
+  Zap,
+  Database,
+  Lock,
+  Download,
+  Trash2,
+  X,
+  UserCheck,
+  Sliders,
   Layers,
   Mic,
   Square,
-  Upload,
-  Play,
   Copy,
-  Check,
-  Download,
   RefreshCw,
-  Sparkles,
-  Cpu,
-  Building,
   User,
-  Mail,
-  Phone,
   MapPin,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  Lock,
-  ArrowUpRight,
   Calculator,
-  Volume2,
   Palette,
-  Target,
   Briefcase,
   Compass,
   FileCode,
-  Sliders,
-  Database,
-  X,
-  UserCheck,
-  Trash2,
-  ArrowRight,
-  Clock,
-  Award,
-  Zap,
+  FileCheck2,
+  CheckSquare,
+  Square as SquareIcon,
+  ExternalLink,
   Lightbulb,
-  ExternalLink
+  Cpu
 } from 'lucide-react';
 
 // ==========================================
-// CENTRAL CONFIGURATION & CONSTANTS
+// BRAND LOGO COMPONENT
 // ==========================================
-const ADMIN_PASSCODE = '313423';
+function BrandLogo({ onClick, className = "h-10 w-auto sm:h-12" }) {
+  const [imgError, setImgError] = useState(false);
 
+  return imgError ? (
+    <div 
+      className="p-2.5 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl text-slate-950 font-black shadow-lg shadow-emerald-500/20 cursor-pointer flex items-center justify-center shrink-0"
+      onDoubleClick={onClick}
+      title="Admin Access"
+    >
+       <Building className="w-6 h-6 sm:w-7 sm:h-7 text-slate-950" />
+    </div>
+  ) : (
+    <img 
+      src="/logo.jpg" 
+      alt="Rooted Solutions Logo" 
+      className={`${className} cursor-pointer rounded-full border-2 border-emerald-500/30 hover:border-emerald-400 transition-colors shadow-lg shadow-emerald-500/20 shrink-0`}
+      onError={() => setImgError(true)}
+      onDoubleClick={onClick}
+      title="Admin Access"
+    />
+  );
+}
+
+// ==========================================
+// VALUE LADDER PACKAGES DEFINITION
+// ==========================================
 const PACKAGES = [
   {
     id: 'contract',
@@ -185,53 +205,16 @@ const PROBING_QUESTIONS = {
   ]
 };
 
-// SVG Fallback Icons for Document Generation Area
-const DocumentIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
-const CodeIcon = ({className}) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
-
 // ==========================================
-// BRAND LOGO COMPONENT WITH FALLBACK
+// APP CONSOLE (ADMIN WORKSPACE)
 // ==========================================
-function BrandLogo({ size = "w-9 h-9" }) {
-  const [hasError, setHasError] = useState(false);
-
-  if (hasError) {
-    return (
-      <div className={`${size} p-1.5 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl text-slate-950 flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0`}>
-        <Building className="w-full h-full text-slate-950 p-1" />
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src="/logo.jpg"
-      alt="Rooted Solutions"
-      onError={() => setHasError(true)}
-      className={`${size} rounded-full object-cover border border-emerald-500/40 shadow-md shadow-emerald-500/20 shrink-0`}
-    />
-  );
-}
-
-// ==========================================
-// INLINE APP CONSOLE COMPONENT
-// ==========================================
-function AppConsole() {
+function AppConsole({ clientProfile, setClientProfile }) {
   const [selectedPackageId, setSelectedPackageId] = React.useState('contract');
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [generatedContent, setGeneratedContent] = React.useState('');
   const [executionTime, setExecutionTime] = React.useState(null);
   const [copied, setCopied] = React.useState(false);
-
-  const [clientProfile, setClientProfile] = React.useState({
-    businessName: 'Apex Plumbing & HVAC',
-    contactName: 'John Smith',
-    email: 'john@apexplumbingco.com',
-    phone: '(303) 555-0192',
-    address: '1420 E 104th Ave, Thornton CO',
-    website: 'www.apexplumbingco.com',
-    socialMedia: 'FB/IG: @apexplumbingco'
-  });
+  const [docsCopied, setDocsCopied] = React.useState(false);
 
   const [contractInputs, setContractInputs] = React.useState({
     clientSignerTitle: 'Owner / Operator',
@@ -240,7 +223,7 @@ function AppConsole() {
     paymentTerms: '50% upfront deposit, 50% upon final delivery',
     selectedServices: ['financial', 'sop', 'consulting'],
     specialTerms: 'Includes weekly 30-minute status check-ins while work is underway. Target completion within 10 business days.',
-    exclusions: 'Software subscriptions, state filing fees, and direct ad spending are paid directly by the client.'
+    exclusions: 'Software subscriptions, state filing fees, and direct ad spending are paid directly by the client. Any additional custom consulting outside this initial scope will be billed at our standard rate of $50/hour.'
   });
 
   const [finInputs, setFinInputs] = React.useState({
@@ -267,6 +250,35 @@ function AppConsole() {
     voiceNotes: 'When arriving at a customer site, do a 15-minute walkthrough, fill out the digital checklist, review job options with the homeowner, get a digital sign-off before starting work, and take pre-work photos.'
   });
 
+  const finCalculations = React.useMemo(() => {
+    const grossRev = finInputs.avgJobPrice * finInputs.monthlyVolume;
+    const directCogs = grossRev * (finInputs.cogsPct / 100);
+    const processingFees = grossRev * (finInputs.processingFeePct / 100);
+    const grossProfit = grossRev - directCogs - processingFees;
+    
+    const opexSum = finInputs.opexItems.reduce((acc, item) => acc + (Number(item.cost) || 0), 0);
+    const totalFixedOpex = opexSum + Number(finInputs.loanPayments);
+    const netEbit = grossProfit - totalFixedOpex;
+    const taxReserve = netEbit > 0 ? netEbit * (finInputs.taxReservePct / 100) : 0;
+    const netTakeHome = netEbit - taxReserve;
+    const marginPct = grossRev > 0 ? ((netTakeHome / grossRev) * 100).toFixed(1) : 0;
+    const contributionMarginPct = 1 - (finInputs.cogsPct / 100) - (finInputs.processingFeePct / 100);
+    const breakEvenMonthlyRev = contributionMarginPct > 0 ? Math.round(totalFixedOpex / contributionMarginPct) : 0;
+
+    return {
+      grossRev,
+      directCogs,
+      processingFees,
+      grossProfit,
+      totalFixedOpex,
+      netEbit,
+      taxReserve,
+      netTakeHome,
+      marginPct,
+      breakEvenMonthlyRev
+    };
+  }, [finInputs]);
+
   const generateDocument = async () => {
     setIsGenerating(true);
     const startTime = performance.now();
@@ -284,12 +296,165 @@ function AppConsole() {
       const depositAmount = Math.round(contractInputs.totalContractValue * (contractInputs.depositPct / 100));
       const remainingBalance = contractInputs.totalContractValue - depositAmount;
 
-      output = `# CLIENT SERVICES & CONSULTING AGREEMENT\n\n**PROVIDER:** Rooted Solutions\n**CLIENT:** ${clientProfile.businessName}  \n**DATE:** ${dateStr}  \n\n---\n\n### PARTIES & CONTACT DETAILS\n\n| PROVIDER INFORMATION | CLIENT INFORMATION |\n| :--- | :--- |\n| **Company:** Rooted Solutions | **Company:** ${clientProfile.businessName} |\n| **Representative:** Matthew Lorensen | **Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle}) |\n| **Service Region:** Colorado, USA | **Address:** ${clientProfile.address} |\n| **Contact Email:** info@rootedsolutions.com | **Contact Email:** ${clientProfile.email} |\n| **Contact Phone:** (720) 555-0199 | **Contact Phone:** ${clientProfile.phone} |\n\n---\n\n### 1. SCOPE OF AGREED SERVICES\nRooted Solutions shall perform the following customized business advisory deliverables for **${clientProfile.businessName}**:\n\n${includedList || '- Custom Business Advisory & Setup'}\n\n---\n\n### 2. INVESTMENT & PAYMENT TERMS\n\n- **Total Contract Price:** $${contractInputs.totalContractValue.toLocaleString()} USD\n- **Upfront Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD (Due prior to project launch)\n- **Remaining Balance:** $${remainingBalance.toLocaleString()} USD (Due upon final deliverable hand-off)\n- **Payment Structure:** ${contractInputs.paymentTerms}\n\n---\n\n### 3. TIMELINE & PROJECT MILESTONES\n- **Project Kickoff:** Immediately following receipt of deposit and completed intake profile.\n- **Communication Schedule:** ${contractInputs.specialTerms}\n\n---\n\n### 4. EXCLUSIONS & BOUNDARIES\n${contractInputs.exclusions}\n\n---\n\n### 5. GENERAL BUSINESS TERMS\n- **Scope Changes:** Any services requested outside this agreement will be documented in a separate written addendum.\n- **Intellectual Property:** Upon final payment receipt, all custom documents, models, and checklists belong 100% to **${clientProfile.businessName}**.\n- **Confidentiality:** Rooted Solutions maintains strict non-disclosure of all client financial numbers and business processes.\n\n---\n\n### 6. AUTHORIZATION & SIGNATURES\n\nBy signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.\n\n**ROOTED SOLUTIONS**\n\n__________________________________________  \nAuthorized Representative  \nDate: ${dateStr}  \n\n\n**CLIENT: ${clientProfile.businessName.toUpperCase()}**\n\n__________________________________________  \n${clientProfile.contactName}, ${contractInputs.clientSignerTitle}  \nDate: ________________________`;
+      output = `# CLIENT SERVICES & CONSULTING AGREEMENT
+
+**PROVIDER:** Rooted Solutions  
+**CLIENT:** ${clientProfile.businessName}  
+**DATE:** ${dateStr}  
+
+---
+
+### PARTIES & CONTACT DETAILS
+
+| PROVIDER INFORMATION | CLIENT INFORMATION |
+| :--- | :--- |
+| **Company:** Rooted Solutions | **Company:** ${clientProfile.businessName} |
+| **Representative:** Matthew Lorensen | **Representative:** ${clientProfile.contactName} (${contractInputs.clientSignerTitle}) |
+| **Service Region:** Commerce City, CO | **Location:** ${clientProfile.address || 'Address on file'} |
+| **Contact Email:** info@rootedsolutions.com | **Contact Email:** ${clientProfile.email} |
+| **Contact Phone:** (720) 555-0199 | **Contact Phone:** ${clientProfile.phone} |
+
+---
+
+### 1. SCOPE OF AGREED SERVICES
+Rooted Solutions shall perform the following customized business advisory deliverables for **${clientProfile.businessName}**:
+
+${includedList || '- Custom Business Advisory & Setup'}
+
+---
+
+### 2. INVESTMENT & PAYMENT TERMS
+
+- **Total Contract Price:** $${contractInputs.totalContractValue.toLocaleString()} USD
+- **Upfront Deposit (${contractInputs.depositPct}%):** $${depositAmount.toLocaleString()} USD (Due prior to project launch)
+- **Remaining Balance:** $${remainingBalance.toLocaleString()} USD (Due upon final deliverable hand-off)
+- **Payment Structure:** ${contractInputs.paymentTerms}
+
+---
+
+### 3. TIMELINE & PROJECT MILESTONES
+- **Project Kickoff:** Immediately following receipt of deposit and completed intake profile.
+- **Communication Schedule:** ${contractInputs.specialTerms}
+
+---
+
+### 4. EXCLUSIONS & BOUNDARIES
+${contractInputs.exclusions}
+
+---
+
+### 5. GENERAL BUSINESS TERMS
+- **Scope Changes:** Any services requested outside this agreement will be documented in a separate written addendum.
+- **Intellectual Property:** Upon final payment receipt, all custom documents, models, and checklists belong 100% to **${clientProfile.businessName}**.
+- **Confidentiality:** Rooted Solutions maintains strict non-disclosure of all client financial numbers and business processes.
+
+---
+
+### 6. AUTHORIZATION & SIGNATURES
+
+By signing below, the parties agree to the terms, scope, and payment schedule set forth in this Agreement.
+
+**ROOTED SOLUTIONS**
+
+__________________________________________  
+Authorized Representative  
+Date: ${dateStr}  
+
+
+**CLIENT: ${clientProfile.businessName.toUpperCase()}**
+
+__________________________________________  
+${clientProfile.contactName}, ${contractInputs.clientSignerTitle}  
+Date: ________________________`;
+    } else if (selectedPackageId === 'financial') {
+      output = `# SIMPLE NUMBERS & PROFIT TRACKER
+**Business:** ${clientProfile.businessName} (${clientProfile.contactName})
+**Date:** ${dateStr}
+
+---
+
+### 1. MONTHLY SALES & JOB PRICING
+- **Average Price per Job:** $${finInputs.avgJobPrice.toLocaleString()}
+- **Jobs Done Per Month:** ${finInputs.monthlyVolume} jobs
+- **Total Monthly Sales:** $${finCalculations.grossRev.toLocaleString()}
+- **Estimated Yearly Sales:** $${(finCalculations.grossRev * 12).toLocaleString()}
+
+---
+
+### 2. DIRECT JOB COSTS
+- **Materials & Supplies (${finInputs.cogsPct}%):** $${finCalculations.directCogs.toLocaleString()} / month
+- **Card Payment Fees (${finInputs.processingFeePct}%):** $${finCalculations.processingFees.toLocaleString()} / month
+- **Money Left After Job Costs:** $${finCalculations.grossProfit.toLocaleString()} / month
+
+---
+
+### 3. MONTHLY BUSINESS BILLS (FIXED EXPENDITURES)
+${finInputs.opexItems.map(item => `- **${item.name}:** $${item.cost}/month`).join('\n')}
+- **Equipment / Loan Payments:** $${finInputs.loanPayments}/month
+- **Total Monthly Business Bills:** $${finCalculations.totalFixedOpex.toLocaleString()}
+
+---
+
+### 4. MONEY YOU KEEP & MINIMUM SALES GOAL
+- **Profit Before Taxes:** $${finCalculations.netEbit.toLocaleString()} / month
+- **Tax Savings Set-Aside (${finInputs.taxReservePct}%):** $${finCalculations.taxReserve.toLocaleString()} / month
+- **Estimated Money You Keep (Take-Home):** $${finCalculations.netTakeHome.toLocaleString()} / month (${finCalculations.marginPct}% profit margin)
+- **Minimum Monthly Sales Goal (Break-Even):** $${finCalculations.breakEvenMonthlyRev.toLocaleString()} / month`;
     } else if (selectedPackageId === 'sop') {
-      output = `# STEP-BY-STEP HOW-TO GUIDE\n**Guide ID:** GUIDE-${Math.floor(1000 + Math.random() * 9000)}\n**Title:** ${sopInputs.sopTitle}\n**Department / Area:** ${sopInputs.department}\n**Who Manages This:** ${sopInputs.processOwner}\n**Apps / Tools Used:** ${sopInputs.systemsUsed}\n**Date:** ${dateStr}\n\n---\n\n### 1. WHY WE DO THIS\nThis guide lays out the step-by-step steps for completing site diagnostics, giving quotes, getting customer sign-off, and taking pre-job photos for ${clientProfile.businessName}.\n\n### 2. WHEN TO START THIS PROCESS\n- **Trigger:** ${sopInputs.inputTrigger}\n\n### 3. STEP-BY-STEP INSTRUCTIONS\n1. **Arrive & Greet:** Arrive on time, introduce yourself, and walk the customer through what you will be inspecting.\n2. **Check the Site:** Run through your standard job checklist on your phone or tablet.\n3. **Show Pricing Options:** Show the customer clear, upfront pricing before starting any work.\n4. **Get Digital Sign-Off:** Get the customer's signature and deposit on your phone/tablet.\n5. **Take Photos:** Take clear photos of existing site conditions and save them to the job file.\n\n### 4. HOW TO HANDLE PROBLEMS OR SCOPE CHANGES\n- **Unexpected Work Needed:** Stop work immediately, explain the issue to the customer, show them the updated price, and get sign-off before doing any extra work.\n\n### 5. QUICK QUALITY CHECKLIST\n- [ ] Job photos saved to customer file\n- [ ] Upfront pricing reviewed with customer\n- [ ] Digital signature collected\n- [ ] Deposit payment verified\n- [ ] Work area cleaned up before leaving site`;
+      output = `# STEP-BY-STEP HOW-TO GUIDE
+**Guide ID:** GUIDE-${Math.floor(1000 + Math.random() * 9000)}
+**Title:** ${sopInputs.sopTitle}
+**Department / Area:** ${sopInputs.department}
+**Who Manages This:** ${sopInputs.processOwner}
+**Apps / Tools Used:** ${sopInputs.systemsUsed}
+**Date:** ${dateStr}
+
+---
+
+### 1. WHY WE DO THIS
+This guide lays out the step-by-step steps for completing site diagnostics, giving quotes, getting customer sign-off, and taking pre-job photos for ${clientProfile.businessName}.
+
+### 2. WHEN TO START THIS PROCESS
+- **Trigger:** ${sopInputs.inputTrigger}
+
+### 3. STEP-BY-STEP INSTRUCTIONS
+1. **Arrive & Greet:** Arrive on time, introduce yourself, and walk the customer through what you will be inspecting.
+2. **Check the Site:** Run through your standard job checklist on your phone or tablet.
+3. **Show Pricing Options:** Show the customer clear, upfront pricing before starting any work.
+4. **Get Digital Sign-Off:** Get the customer's signature and deposit on your phone/tablet.
+5. **Take Photos:** Take clear photos of existing site conditions and save them to the job file.
+
+### 4. HOW TO HANDLE PROBLEMS OR SCOPE CHANGES
+- **Unexpected Work Needed:** Stop work immediately, explain the issue to the customer, show them the updated price, and get sign-off before doing any extra work.
+
+### 5. QUICK QUALITY CHECKLIST
+- [ ] Job photos saved to customer file
+- [ ] Upfront pricing reviewed with customer
+- [ ] Digital signature collected
+- [ ] Deposit payment verified
+- [ ] Work area cleaned up before leaving site`;
     } else {
       const activePkg = PACKAGES.find(p => p.id === selectedPackageId);
-      output = `# ${activePkg.title.toUpperCase()}\n**Prepared by:** Rooted Solutions\n**Prepared for:** ${clientProfile.businessName} (${clientProfile.contactName})\n**Date:** ${dateStr}\n\n---\n\n### SUMMARY OVERVIEW\nThis practical business document was created specifically for **${clientProfile.businessName}** to help keep operations simple, organized, and profitable.\n\n### KEY HIGHLIGHTS & DELIVERABLES\n1. **Deliverable Name:** ${activePkg.title}\n2. **Package Price:** $${activePkg.price}\n3. **Status:** Ready for Action\n\n#### Included Items:\n${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}\n\n---\n*Created by Rooted Solutions Small Business Tool.*`;
+      output = `# ${activePkg.title.toUpperCase()}
+**Prepared by:** Rooted Solutions
+**Prepared for:** ${clientProfile.businessName} (${clientProfile.contactName})
+**Date:** ${dateStr}
+
+---
+
+### SUMMARY OVERVIEW
+This practical business document was created specifically for **${clientProfile.businessName}** to help keep operations simple, organized, and profitable.
+
+### KEY HIGHLIGHTS & DELIVERABLES
+1. **Deliverable Name:** ${activePkg.title}
+2. **Package Price:** $${activePkg.price}
+3. **Status:** Ready for Action
+
+#### Included Items:
+${activePkg.deliverables.map(d => `- [x] ${d}`).join('\n')}
+
+---
+*Created by Rooted Solutions Small Business Tool.*`;
     }
 
     setGeneratedContent(output);
@@ -298,52 +463,48 @@ function AppConsole() {
     setIsGenerating(false);
   };
 
-  const exportToGoogleDocs = () => {
-    navigator.clipboard.writeText(generatedContent);
-    setCopied(true);
-    window.open('https://docs.new', '_blank');
-    setTimeout(() => setCopied(false), 3000);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedContent);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy!', err);
+    }
+  };
+
+  const exportToGoogleDocs = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedContent);
+      setDocsCopied(true);
+      window.open('https://docs.new', '_blank');
+      setTimeout(() => setDocsCopied(false), 4000);
+    } catch (err) {
+      console.error('Clipboard copy failed before opening docs!', err);
+    }
   };
 
   const activePkg = PACKAGES.find(p => p.id === selectedPackageId) || PACKAGES[0];
   const activeProbingQuestions = PROBING_QUESTIONS[selectedPackageId] || PROBING_QUESTIONS.contract;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
-      
-      {/* CONSOLE HEADER */}
-      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-4 sm:px-8 py-4 sticky top-0 z-50">
-        <div className="max-w-[1700px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BrandLogo size="w-9 h-9" />
-            <div>
-              <h1 className="text-lg font-bold text-slate-100 tracking-tight">Rooted Solutions Consulting Tool</h1>
-              <p className="text-xs text-slate-400">Client Intake & Operations Engine</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl font-mono">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            System Active
-          </div>
-        </div>
-      </header>
-
-      {/* CLIENT PROFILE (TOP BAR) */}
-      <div className="border-b border-slate-800/60 bg-slate-900/40 px-4 sm:px-8 py-4">
-        <div className="max-w-[1700px] mx-auto space-y-4">
-          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-            <Building className="w-4 h-4 text-emerald-400" />
-            Client Profile (CRM)
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-slate-950 pb-20">
+      <main className="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        {/* TOP ROW: CLIENT PROFILE SPANNING FULL WIDTH */}
+        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4 shadow-md">
+          <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2 border-b border-slate-800/60 pb-3">
+            <UserCheck className="w-4 h-4 text-emerald-400" />
+            Client CRM Profile
           </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
-              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Client Business Name</label>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Business Name</label>
               <input
                 type="text"
                 value={clientProfile.businessName}
                 onChange={(e) => setClientProfile({ ...clientProfile, businessName: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -352,7 +513,16 @@ function AppConsole() {
                 type="text"
                 value={clientProfile.contactName}
                 onChange={(e) => setClientProfile({ ...clientProfile, contactName: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Phone</label>
+              <input
+                type="text"
+                value={clientProfile.phone}
+                onChange={(e) => setClientProfile({ ...clientProfile, phone: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
@@ -361,66 +531,51 @@ function AppConsole() {
                 type="email"
                 value={clientProfile.email}
                 onChange={(e) => setClientProfile({ ...clientProfile, email: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Phone Number</label>
-              <input
-                type="tel"
-                value={clientProfile.phone}
-                onChange={(e) => setClientProfile({ ...clientProfile, phone: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
-              />
-            </div>
-
-            <div className="sm:col-span-2 lg:col-span-2">
               <label className="text-[11px] font-medium text-slate-400 mb-1 block">Full Address</label>
               <input
                 type="text"
-                value={clientProfile.address}
+                value={clientProfile.address || ''}
                 onChange={(e) => setClientProfile({ ...clientProfile, address: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
               />
             </div>
-
-            <div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+             <div>
               <label className="text-[11px] font-medium text-slate-400 mb-1 block">Website</label>
               <input
                 type="text"
-                value={clientProfile.website}
+                value={clientProfile.website || ''}
                 onChange={(e) => setClientProfile({ ...clientProfile, website: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Social Media Links / Handles</label>
+              <label className="text-[11px] font-medium text-slate-400 mb-1 block">Social Media Handles</label>
               <input
                 type="text"
-                value={clientProfile.socialMedia}
+                value={clientProfile.socialMedia || ''}
                 onChange={(e) => setClientProfile({ ...clientProfile, socialMedia: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-500 focus:outline-none"
               />
             </div>
           </div>
         </div>
-      </div>
 
-      {/* MAIN WORKSPACE */}
-      <main className="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
-        
-        {/* ROW 1: MENU & PROBING QUESTIONS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* MIDDLE ROW: DELIVERABLE SELECTOR & DISCOVERY NOTES */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* SERVICE DELIVERABLE MENU */}
-          <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4 h-full flex flex-col shadow-inner">
-            <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
-              <span className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-400" />
-                Service Deliverable Menu
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto pr-1">
+          <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-md flex flex-col h-[400px]">
+            <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2 border-b border-slate-800/60 pb-3 mb-3 shrink-0">
+              <Layers className="w-4 h-4 text-emerald-400" />
+              Target Deliverable
+            </h3>
+            
+            <div className="flex-1 overflow-y-auto space-y-2 pr-2">
               {PACKAGES.map((pkg) => {
                 const Icon = pkg.icon;
                 const isSelected = selectedPackageId === pkg.id;
@@ -428,13 +583,13 @@ function AppConsole() {
                   <button
                     key={pkg.id}
                     onClick={() => setSelectedPackageId(pkg.id)}
-                    className={`flex items-start gap-3 p-3 rounded-xl border text-left transition-all ${
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${
                       isSelected
                         ? 'bg-emerald-500/15 border-emerald-500/60 text-slate-100 shadow-md shadow-emerald-500/10 ring-1 ring-emerald-500/30'
                         : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-400 hover:bg-slate-900/60'
                     }`}
                   >
-                    <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
+                    <div className={`p-2 rounded-lg shrink-0 ${isSelected ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -442,7 +597,6 @@ function AppConsole() {
                         <span className="text-xs font-bold truncate text-slate-200">{pkg.title}</span>
                         <span className="text-[10px] font-mono text-emerald-400 font-bold shrink-0">${pkg.price}</span>
                       </div>
-                      <p className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{pkg.description}</p>
                     </div>
                   </button>
                 );
@@ -450,94 +604,97 @@ function AppConsole() {
             </div>
           </div>
 
-          {/* DYNAMIC PROBING QUESTIONS SECTION */}
-          <div className="bg-slate-950/80 border border-emerald-500/20 rounded-2xl p-5 space-y-3 h-full flex flex-col shadow-inner">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
-                <Lightbulb className="w-4 h-4" />
-                Key Discovery Probing Questions
-              </span>
-              <span className="text-[10px] font-mono text-slate-500">Ask Client Before Notes</span>
-            </div>
+          <div className="lg:col-span-8 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-md flex flex-col h-[400px]">
+            <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2 border-b border-slate-800/60 pb-3 shrink-0">
+               <Lightbulb className="w-4 h-4 text-emerald-400" />
+               Discovery Workflow: {activePkg.title}
+            </h3>
 
-            <div className="space-y-3 overflow-y-auto pr-1 flex-1 max-h-72">
-              {activeProbingQuestions.map((pq, idx) => (
-                <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-3 text-xs space-y-1">
-                  <span className="font-semibold text-slate-200 block text-xs">{pq.question}</span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">{pq.detail}</p>
+            <div className="flex-1 flex flex-col pt-4 gap-4 min-h-0">
+              <div className="bg-slate-950/80 border border-emerald-500/20 rounded-xl p-3.5 space-y-2.5 shrink-0">
+                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                  Probing Questions:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto pr-1">
+                  {activeProbingQuestions.map((pq, idx) => (
+                    <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-lg p-2.5 text-xs space-y-0.5">
+                      <span className="font-semibold text-slate-200 block text-[11px]">{pq.question}</span>
+                      <p className="text-[10.5px] text-slate-400 leading-snug">{pq.detail}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div className="flex-1 flex flex-col">
+                <label className="text-[11px] font-medium text-slate-400 mb-1 block">Special Terms & Discovery Notes</label>
+                <textarea
+                  value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
+                  onChange={(e) => {
+                    if (selectedPackageId === 'contract') {
+                      setContractInputs({ ...contractInputs, specialTerms: e.target.value });
+                    } else {
+                      setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
+                    }
+                  }}
+                  placeholder="Record discovery answers, client payment system restrictions, special conditions..."
+                  className="flex-1 w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500/50 resize-none"
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ROW 2: GENERAL INTAKE NOTES */}
-        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5">
-          <label className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-emerald-400" />
-            Special Terms & Discovery Notes
-          </label>
-          <textarea
-            rows={4}
-            value={selectedPackageId === 'contract' ? contractInputs.specialTerms : sopInputs.voiceNotes}
-            onChange={(e) => {
-              if (selectedPackageId === 'contract') {
-                setContractInputs({ ...contractInputs, specialTerms: e.target.value });
-              } else {
-                setSopInputs({ ...sopInputs, voiceNotes: e.target.value });
-              }
-            }}
-            placeholder="Record discovery answers, client payment system restrictions, special conditions..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-emerald-500/50 resize-y"
-          />
-        </div>
-
-        {/* ROW 3: GENERATE ACTION BUTTON */}
-        <button
-          onClick={generateDocument}
-          disabled={isGenerating}
-          className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold py-4 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-wider"
-        >
-          {isGenerating ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-          Generate {activePkg.title} Deliverable
-        </button>
-
-        {/* ROW 4: DOCUMENT GENERATOR CANVAS */}
-        <div className="flex-1 bg-slate-900/60 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden backdrop-blur-sm min-h-[500px]">
-          <div className="bg-slate-950/80 px-6 py-4 border-b border-slate-800/80 flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-              <CodeIcon className="w-4 h-4 text-emerald-400" />
-              {activePkg.title} Output Preview
-            </span>
-            <div className="flex items-center gap-3">
+        {/* BOTTOM FULL WIDTH: GENERATOR CANVAS */}
+        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl shadow-xl flex flex-col overflow-hidden backdrop-blur-sm h-[600px]">
+          
+          <div className="bg-slate-950/80 px-5 py-4 border-b border-slate-800/80 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={generateDocument}
+                disabled={isGenerating}
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+              >
+                {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                Generate {activePkg.title}
+              </button>
               {executionTime && (
-                <span className="text-[10px] font-mono text-slate-500 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
-                  Generated in {executionTime}s
-                </span>
+                <span className="text-[10px] font-mono text-slate-500">Rendered in {executionTime}s</span>
               )}
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={copyToClipboard}
+                disabled={!generatedContent}
+                className="px-3 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 text-xs flex items-center gap-1.5 transition-colors disabled:opacity-30"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+              
               <button
                 onClick={exportToGoogleDocs}
                 disabled={!generatedContent}
-                className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/40 rounded-lg text-emerald-400 text-xs font-bold flex items-center gap-2 hover:bg-emerald-500 hover:text-slate-950 transition-all disabled:opacity-30"
+                className={`px-4 py-2 border rounded-lg text-xs font-bold flex items-center gap-2 transition-all disabled:opacity-30 ${
+                  docsCopied 
+                    ? 'bg-amber-500 border-amber-400 text-slate-950 animate-pulse' 
+                    : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950'
+                }`}
               >
-                {copied ? <Check className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
-                {copied ? 'Copied & Opening...' : 'Open in Google Docs'}
+                {docsCopied ? <CheckSquare className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
+                {docsCopied ? 'Ready to Paste (Ctrl+V)!' : 'Open in Google Docs'}
               </button>
             </div>
           </div>
-          
-          <div className="flex-1 p-6 overflow-y-auto font-mono text-sm text-slate-300 leading-relaxed bg-[#0a0f18]">
+
+          <div className="flex-1 p-6 overflow-y-auto font-mono text-[13px] text-slate-300 leading-relaxed bg-slate-950/30">
             {generatedContent ? (
-              <pre className="whitespace-pre-wrap font-mono text-slate-200 max-w-4xl mx-auto">{generatedContent}</pre>
+              <pre className="whitespace-pre-wrap font-mono text-slate-200">{generatedContent}</pre>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-4 py-20">
-                <DocumentIcon className="w-12 h-12 text-slate-700" />
-                <div className="text-center">
-                  <p className="text-sm font-semibold text-slate-400">Workspace Ready</p>
-                  <p className="text-xs text-slate-600 mt-1 max-w-md">
-                    Complete your discovery notes above and click the generate button to view the output.
-                  </p>
-                </div>
+              <div className="h-full flex flex-col items-center justify-center text-slate-500">
+                <FileCode className="w-12 h-12 text-slate-800 mb-3" />
+                <p className="text-sm font-semibold text-slate-400">Executive Preview Canvas</p>
+                <p className="text-xs mt-1">Review your inputs and click Generate to run the engine.</p>
               </div>
             )}
           </div>
@@ -549,7 +706,7 @@ function AppConsole() {
 }
 
 // ==========================================
-// MAIN EXPORT (LANDING PAGE + APP CONSOLE)
+// COMPONENT: MAIN ENTRY APPLICATION
 // ==========================================
 export default function App() {
   const [formData, setFormData] = useState({
@@ -562,11 +719,22 @@ export default function App() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
-  const [formError, setFormError] = useState('');
 
-  // LIVE GOOGLE SCRIPT WEB APP URL CONNECTED!
-  const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxLlF-Yp3OupG6wkRzmPOrNAyOBB1yp6KyLvEJlCk6UmNTOeC6-bKGKTHQTgo3dxZ8j/exec';
+  // Shared Console CRM State
+  const [clientProfile, setClientProfile] = useState({
+    businessName: 'Apex Plumbing & HVAC',
+    contactName: 'John Smith',
+    email: 'john@apexplumbingco.com',
+    phone: '(303) 555-0192',
+    address: '1420 E 104th Ave, Thornton CO',
+    website: 'www.apexplumbingco.com',
+    socialMedia: 'FB/IG: @apexplumbingco'
+  });
+
+  // LIVE GOOGLE SCRIPT WEB APP URL
+  const GOOGLE_SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwrUtjKOIwOiqIlltVCV3ZQDRPamC9m05_yhTS50M45Mb-r6QAD1ha42gUGKGkht9oN/exec';
 
   const [showAdmin, setShowAdmin] = useState(false);
   const [adminPin, setAdminPin] = useState('');
@@ -577,7 +745,6 @@ export default function App() {
       const stored = localStorage.getItem('rooted_leads');
       return stored ? JSON.parse(stored) : [];
     } catch (e) {
-      console.error("Local storage error:", e);
       return [];
     }
   });
@@ -585,16 +752,19 @@ export default function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setFormError('');
+    setSubmitError(false);
     
-    // 1. Create the lead object with timestamp included
     const newLead = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
-      ...formData
+      name: formData.name,
+      businessName: formData.businessName,
+      phone: formData.phone,
+      email: formData.email,
+      packageInterest: formData.packageInterest,
+      notes: formData.notes
     };
 
-    // 2. ALWAYS Save locally first to guarantee no data loss
     const updatedLeads = [newLead, ...savedLeads];
     setSavedLeads(updatedLeads);
     try {
@@ -603,26 +773,36 @@ export default function App() {
       console.error('Failed to save lead locally:', err);
     }
 
-    // 3. Transmit to Google Sheets Webhook using text/plain to bypass CORS preflight issues
-    if (GOOGLE_SHEET_WEBHOOK_URL && GOOGLE_SHEET_WEBHOOK_URL.startsWith('http')) {
+    if (GOOGLE_SHEET_WEBHOOK_URL) {
       try {
+        const formParams = new URLSearchParams();
+        formParams.append('date', newLead.date);
+        formParams.append('name', newLead.name);
+        formParams.append('businessName', newLead.businessName);
+        formParams.append('phone', newLead.phone);
+        formParams.append('email', newLead.email);
+        formParams.append('packageInterest', newLead.packageInterest);
+        formParams.append('notes', newLead.notes);
+
         await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(newLead)
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formParams
         });
       } catch (err) {
         console.error('Failed to post lead to Google Drive Sheet:', err);
-        setFormError('Warning: Could not connect to the remote database, but your lead was safely stored locally in your Vault!');
+        setSubmitError(true);
+        setIsSubmitting(false);
+        return; 
       }
     }
 
-    // 4. Force success state
     setIsSubmitting(false);
     setSubmitted(true);
     
-    // Reset form after saving
     setFormData({
       name: '',
       businessName: '',
@@ -633,9 +813,21 @@ export default function App() {
     });
   };
 
+  const loadLeadIntoConsole = (lead) => {
+    setClientProfile(prev => ({
+      ...prev,
+      businessName: lead.businessName || prev.businessName,
+      contactName: lead.name || prev.contactName,
+      email: lead.email || prev.email,
+      phone: lead.phone || prev.phone
+    }));
+    setShowAdmin(false);
+    setShowConsole(true);
+  };
+
   const handleAdminAuth = (e) => {
     e.preventDefault();
-    if (adminPin === ADMIN_PASSCODE) {
+    if (adminPin === '313423') {
       setIsAuthenticated(true);
     } else {
       alert('Access Denied. Incorrect passcode.');
@@ -681,25 +873,41 @@ export default function App() {
           <span className="font-mono text-emerald-400 font-bold flex items-center gap-2">
             <Sliders className="w-4 h-4" /> Rooted Solutions Consulting Tool (Admin View)
           </span>
-          <button
-            onClick={() => setShowConsole(false)}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-100 px-3 py-1 rounded-lg transition-colors font-sans font-semibold flex items-center gap-1.5"
-          >
-            ← Back to Public Website
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAdmin(true)}
+              className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-lg transition-colors font-sans font-semibold flex items-center gap-1.5"
+            >
+              <Database className="w-3.5 h-3.5" />
+              View Leads Vault ({savedLeads.length})
+            </button>
+            <button
+              onClick={() => setShowConsole(false)}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-100 px-3 py-1 rounded-lg transition-colors font-sans font-semibold flex items-center gap-1.5"
+            >
+              ← Back to Public Website
+            </button>
+          </div>
         </div>
-        <AppConsole />
+        <AppConsole
+          clientProfile={clientProfile}
+          setClientProfile={setClientProfile}
+        />
       </div>
 
       {/* --- PUBLIC LANDING PAGE VIEW --- */}
       <div className={`${showConsole ? 'hidden' : 'block'}`}>
         
-        {/* NAVIGATION BAR */}
+        {/* NAVIGATION BAR - MASSIVE BRANDING ENHANCEMENT */}
         <nav className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3 cursor-pointer select-none" onDoubleClick={() => setShowAdmin(true)} title="Rooted Solutions">
-              <BrandLogo size="w-9 h-9" />
-              <span className="font-bold text-slate-100 text-lg tracking-tight">Rooted Solutions</span>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <div className="flex items-center gap-3 sm:gap-4">
+              <BrandLogo onClick={() => setShowAdmin(true)} />
+              <div className="flex flex-col justify-center">
+                <span className="font-extrabold text-slate-100 text-xl sm:text-2xl tracking-tight leading-none uppercase">Rooted Solutions</span>
+                <span className="text-emerald-400 font-mono text-[9px] sm:text-[11px] tracking-[0.2em] font-bold uppercase mt-1">Operational Partners</span>
+              </div>
             </div>
 
             <div className="hidden md:flex items-center gap-6 text-sm text-slate-300 font-medium">
@@ -712,7 +920,7 @@ export default function App() {
             <div className="flex items-center gap-3">
               <a
                 href="#contact"
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20"
+                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-emerald-500/20 hidden sm:inline-block"
               >
                 Free 15-Min Chat
               </a>
@@ -720,16 +928,11 @@ export default function App() {
           </div>
         </nav>
 
-        {/* HERO SECTION WITH STRONGER BRANDING */}
+        {/* HERO SECTION */}
         <section className="relative pt-20 pb-16 md:pt-28 md:pb-24 overflow-hidden border-b border-slate-800/60">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-emerald-500/5 blur-3xl pointer-events-none rounded-full" />
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
-
-            <div className="flex flex-col items-center justify-center mb-4 space-y-4">
-               <BrandLogo size="w-20 h-20" />
-               <span className="text-emerald-400 font-mono text-sm tracking-[0.2em] font-bold uppercase bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full">Operational Partners</span>
-            </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-100 max-w-4xl mx-auto leading-tight">
               Simple Operations & Local Marketing — <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">No Corporate Fluff.</span>
@@ -786,30 +989,55 @@ export default function App() {
                 <span className="text-xs font-mono uppercase text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
                   About the Founder
                 </span>
-                <h2 className="text-3xl font-extrabold text-slate-100">Real Experience.<br/>Local Roots.</h2>
+                
+                <h2 className="text-3xl font-extrabold text-slate-100">Enterprise-Grade Operations.<br/>Local Roots.</h2>
+                
                 <p className="text-slate-300 text-sm leading-relaxed">
-                  With over 25 years of hands-on experience spanning manufacturing, customer service, retail, food service, and IT (both scrappy start-ups and global enterprises), I’ve seen firsthand what makes a business run smoothly—and what just wastes your time and money.
-                </p>
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  As an active volunteer and proud resident of the Commerce City area, I built Rooted Solutions to bring enterprise-level efficiency to the local mom-and-pop shops that form the backbone of our community. 
+                  With over 15 years leading complex technology delivery and operations for global enterprises and fast-moving SaaS companies, I’ve seen exactly what it takes to make a business scale—and what causes it to break. I've managed $20M+ software ecosystems, built custom AI-powered automation workflows, and modernized operations for companies like Viasat, Spectrum, and DISH.
                 </p>
                 
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  But my passion isn't in the corporate boardroom; it's right here in the Commerce City area. I built Rooted Solutions to take the exact same operational strategies, AI capabilities, and workflow tools used by global tech giants and deliver them directly to local trade contractors and service providers. You don't need a massive corporate budget to run a highly profitable, streamlined business. 
+                </p>
+                
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                    <h4 className="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-3 flex items-center gap-1.5"><Cpu className="w-4 h-4"/> Certified AI & Tech Expertise</h4>
+                    <ul className="text-xs text-slate-400 space-y-2 font-medium">
+                      <li>• Anthropic AI Fluency & Claude Code</li>
+                      <li>• AWS Generative AI & LLM Workflows</li>
+                      <li>• Python, LangChain & Chroma DB</li>
+                      <li>• Workflow Modernization & Automation</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                    <h4 className="text-teal-400 font-bold text-xs uppercase tracking-wider mb-3 flex items-center gap-1.5"><Briefcase className="w-4 h-4"/> Enterprise Leadership</h4>
+                    <ul className="text-xs text-slate-400 space-y-2 font-medium">
+                      <li>• 15+ Years Technical Program Delivery</li>
+                      <li>• Directed $20M+ Global SaaS Ecosystems</li>
+                      <li>• End-to-End Systems Implementation</li>
+                      <li>• Risk Mitigation & Business Handoffs</li>
+                    </ul>
+                  </div>
+                </div>
+
                 <div className="bg-slate-950/50 border border-emerald-500/30 rounded-xl p-5 mt-4 border-l-4 border-l-emerald-500">
                   <h3 className="text-emerald-400 font-bold text-sm mb-2">Our Mission</h3>
                   <p className="text-slate-300 text-sm italic">
-                    "To empower local business owners with honest, transparent, and practical operational tools that save time and increase profit—without the corporate fluff."
+                    "I am not successful unless you are. My mission is to build practical, straight-to-the-point operational tools that free up your time so you can focus on increasing sales, harvesting new leads, and growing your business—without the corporate fluff."
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 flex flex-col items-center justify-center">
-                    <div className="text-4xl font-black text-emerald-400 font-mono">25+</div>
-                    <div className="text-xs text-slate-400 font-medium">Years of Operations Experience</div>
+                    <div className="text-4xl font-black text-emerald-400 font-mono">15+</div>
+                    <div className="text-xs text-slate-400 font-medium">Years of Tech & Ops Delivery</div>
                 </div>
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 flex flex-col items-center justify-center">
                     <div className="text-4xl font-black text-teal-400 font-mono">5</div>
-                    <div className="text-xs text-slate-400 font-medium">Core Industries Mastered</div>
+                    <div className="text-xs text-slate-400 font-medium">Global Enterprises Modernized</div>
                 </div>
                 <div className="bg-slate-900/60 border border-slate-800 p-6 rounded-2xl text-center space-y-2 col-span-2 flex flex-col items-center justify-center">
                     <div className="text-xl font-bold text-slate-200">Commerce City, CO</div>
@@ -885,6 +1113,28 @@ export default function App() {
                 </a>
               </div>
             </div>
+
+            {/* CUSTOM HOURLY RATE CALLOUT */}
+            <div className="mt-6 border border-slate-800/60 bg-slate-900/40 rounded-2xl p-6 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left shadow-lg">
+              <div className="p-3 bg-slate-950 border border-slate-800 rounded-full shrink-0 text-slate-400">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-200">Custom Consulting & Out-of-Scope Support</h4>
+                <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                  Need something not listed above? Custom operational support is available at a benchmark rate of <strong className="text-emerald-400">$50 per hour</strong> (our standard $200 packages represent about 4 hours of dedicated work). Final rates may vary based on engagement duration and technical complexity.
+                </p>
+              </div>
+              <div className="sm:ml-auto shrink-0 mt-3 sm:mt-0">
+                <a
+                  href="#contact"
+                  className="px-4 py-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-xl text-xs font-bold transition-colors block"
+                >
+                  Discuss Custom Project
+                </a>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -929,17 +1179,10 @@ export default function App() {
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
                   <h3 className="text-lg font-bold text-slate-100">Thank You!</h3>
-                  <p className="text-xs text-slate-400">Your information was received and saved to our leads database. We will reach out shortly to schedule your quick 15-minute intake call.</p>
+                  <p className="text-xs text-slate-400">Your information was received and saved. We will reach out shortly to schedule your quick 15-minute intake call.</p>
                   
-                  {formError && (
-                     <div className="mt-4 bg-amber-500/10 border border-amber-500/30 p-3 rounded-lg text-amber-400 text-[11px] flex items-center justify-center gap-2">
-                        <Lightbulb className="w-4 h-4 shrink-0" />
-                        {formError}
-                     </div>
-                  )}
-
                   <button
-                    onClick={() => { setSubmitted(false); setFormError(''); }}
+                    onClick={() => setSubmitted(false)}
                     className="text-xs font-semibold text-emerald-400 underline hover:text-emerald-300 pt-2"
                   >
                     Submit Another Inquiry
@@ -947,6 +1190,13 @@ export default function App() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {submitError && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-xl text-xs flex items-center gap-2">
+                      <Zap className="w-4 h-4 shrink-0" />
+                      We had a network issue saving your lead. Please try again!
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-medium text-slate-400 mb-1 block">Your Name</label>
@@ -1009,6 +1259,7 @@ export default function App() {
                       <option value="Simple Numbers & Profit Tracker ($200)">Simple Numbers & Profit Tracker ($200)</option>
                       <option value="Step-by-Step How-To Guide ($200)">Step-by-Step How-To Guide ($200)</option>
                       <option value="Local Customer Lead Plan ($200)">Local Customer Lead Plan ($200)</option>
+                      <option value="Custom Consulting ($50/hr)">Custom Consulting ($50/hr)</option>
                     </select>
                   </div>
 
@@ -1044,135 +1295,143 @@ export default function App() {
             <p>Commerce City & Denver Metro Area, Colorado • Plain-English Business Consulting</p>
           </div>
         </footer>
+      </div>
 
-        {/* ADMIN LEADS MODAL */}
-        {showAdmin && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col">
-              
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
-                    <Database className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-100">Private Client Leads Database</h3>
-                    <p className="text-xs text-slate-400">Locally saved web leads ready for outreach</p>
-                  </div>
+      {/* ADMIN LEADS MODAL (Available from both Landing Page and Console) */}
+      {showAdmin && (
+        <div className="fixed inset-0 z-[200] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full p-6 space-y-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+            
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400">
+                  <Database className="w-5 h-5" />
                 </div>
-
-                <button
-                  onClick={() => setShowAdmin(false)}
-                  className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-xl transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-100">Private Client Leads Database</h3>
+                  <p className="text-xs text-slate-400">Locally saved web leads & 1-click Console loader</p>
+                </div>
               </div>
 
-              {!isAuthenticated ? (
-                <form onSubmit={handleAdminAuth} className="py-8 max-w-sm mx-auto text-center space-y-4 w-full">
-                  <Lock className="w-10 h-10 text-emerald-400 mx-auto" />
-                  <div>
-                    <h4 className="text-base font-bold text-slate-100">Admin Passcode Required</h4>
-                  </div>
-                  <input
-                    type="password"
-                    value={adminPin}
-                    onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Enter passcode..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-center text-slate-100 focus:outline-none focus:border-emerald-500/50 font-mono"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all"
-                  >
-                    Unlock Leads Vault
-                  </button>
-                </form>
-              ) : (
-                <div className="flex-1 flex flex-col min-h-0 space-y-4">
+              <button
+                onClick={() => setShowAdmin(false)}
+                className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {!isAuthenticated ? (
+              <form onSubmit={handleAdminAuth} className="py-8 max-w-sm mx-auto text-center space-y-4 w-full">
+                <Lock className="w-10 h-10 text-emerald-400 mx-auto" />
+                <div>
+                  <h4 className="text-base font-bold text-slate-100">Admin Passcode Required</h4>
+                </div>
+                <input
+                  type="password"
+                  value={adminPin}
+                  onChange={(e) => setAdminPin(e.target.value)}
+                  placeholder="Enter passcode..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-center text-slate-100 focus:outline-none focus:border-emerald-500/50 font-mono"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all"
+                >
+                  Unlock Leads Vault
+                </button>
+              </form>
+            ) : (
+              <div className="flex-1 flex flex-col min-h-0 space-y-4">
+                
+                <div className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+                  <span className="text-slate-400 font-mono">Total Saved Leads: <strong className="text-emerald-400">{savedLeads.length}</strong></span>
                   
-                  <div className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
-                    <span className="text-slate-400 font-mono">Total Saved Leads: <strong className="text-emerald-400">{savedLeads.length}</strong></span>
-                    
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => { setShowConsole(true); setShowAdmin(false); }}
-                        className="px-3 py-1.5 bg-emerald-500 text-slate-950 font-bold rounded-lg flex items-center gap-1.5 hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20"
-                      >
-                        <Sliders className="w-3.5 h-3.5" />
-                        Open Consulting Console
-                      </button>
-                      <button
-                        onClick={exportLeadsToCSV}
-                        disabled={savedLeads.length === 0}
-                        className="px-3 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg font-semibold flex items-center gap-1.5 hover:bg-slate-800 transition-all disabled:opacity-40"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Export CSV
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                    {savedLeads.length === 0 ? (
-                      <div className="text-center py-12 text-slate-500 space-y-2">
-                        <UserCheck className="w-8 h-8 mx-auto text-slate-600" />
-                        <p className="text-xs font-medium">No leads submitted yet.</p>
-                      </div>
-                    ) : (
-                      savedLeads.map((lead) => (
-                        <div key={lead.id} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 relative group">
-                          
-                          <div className="flex items-start justify-between gap-4 border-b border-slate-800/60 pb-3">
-                            <div>
-                              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold">
-                                {lead.packageInterest}
-                              </span>
-                              <h4 className="text-sm font-bold text-slate-100 mt-1">{lead.businessName}</h4>
-                              <p className="text-xs text-slate-400">Contact: {lead.name}</p>
-                            </div>
-
-                            <div className="text-right space-y-1">
-                              <span className="text-[10px] text-slate-500 font-mono block">{lead.date}</span>
-                              <button
-                                onClick={() => deleteLead(lead.id)}
-                                className="text-slate-500 hover:text-red-400 p-1 rounded-md transition-colors"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
-                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-                              <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                              <a href={`tel:${lead.phone}`} className="hover:text-emerald-400 font-mono">{lead.phone}</a>
-                            </div>
-
-                            <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-                              <Mail className="w-3.5 h-3.5 text-teal-400 shrink-0" />
-                              <a href={`mailto:${lead.email}`} className="hover:text-teal-400 truncate">{lead.email}</a>
-                            </div>
-                          </div>
-
-                          {lead.notes && (
-                            <div className="bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400">
-                              <span className="font-semibold text-slate-300 block mb-1">Operational Headache Notes:</span>
-                              <p className="leading-relaxed">{lead.notes}</p>
-                            </div>
-                          )}
-
-                        </div>
-                      ))
-                    )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setShowConsole(true); setShowAdmin(false); }}
+                      className="px-3 py-1.5 bg-emerald-500 text-slate-950 font-bold rounded-lg flex items-center gap-1.5 hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20"
+                    >
+                      <Sliders className="w-3.5 h-3.5" />
+                      Open Consulting Console
+                    </button>
+                    <button
+                      onClick={exportLeadsToCSV}
+                      disabled={savedLeads.length === 0}
+                      className="px-3 py-1.5 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg font-semibold flex items-center gap-1.5 hover:bg-slate-800 transition-all disabled:opacity-40"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Export CSV
+                    </button>
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                  {savedLeads.length === 0 ? (
+                    <div className="text-center py-12 text-slate-500 space-y-2">
+                      <UserCheck className="w-8 h-8 mx-auto text-slate-600" />
+                      <p className="text-xs font-medium">No leads submitted yet.</p>
+                    </div>
+                  ) : (
+                    savedLeads.map((lead) => (
+                      <div key={lead.id} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 relative group">
+                        
+                        <div className="flex items-start justify-between gap-4 border-b border-slate-800/60 pb-3">
+                          <div>
+                            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md font-semibold">
+                              {lead.packageInterest}
+                            </span>
+                            <h4 className="text-sm font-bold text-slate-100 mt-1">{lead.businessName}</h4>
+                            <p className="text-xs text-slate-400">Contact: {lead.name}</p>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => loadLeadIntoConsole(lead)}
+                              className="px-2.5 py-1 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1"
+                              title="Populate this lead directly into the Consulting Console CRM"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              Load in Console
+                            </button>
+                            <span className="text-[10px] text-slate-500 font-mono">{lead.date}</span>
+                            <button
+                              onClick={() => deleteLead(lead.id)}
+                              className="text-slate-500 hover:text-red-400 p-1 rounded-md transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                          <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
+                            <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <a href={`tel:${lead.phone}`} className="hover:text-emerald-400 font-mono">{lead.phone}</a>
+                          </div>
+
+                          <div className="flex items-center gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
+                            <Mail className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                            <a href={`mailto:${lead.email}`} className="hover:text-teal-400 truncate">{lead.email}</a>
+                          </div>
+                        </div>
+
+                        {lead.notes && (
+                          <div className="bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400">
+                            <span className="font-semibold text-slate-300 block mb-1">Operational Headache Notes:</span>
+                            <p className="leading-relaxed">{lead.notes}</p>
+                          </div>
+                        )}
+
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
